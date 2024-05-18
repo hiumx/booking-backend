@@ -2,6 +2,7 @@ package com.hiumx.bookingbackend.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "rooms")
+@Builder
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
