@@ -11,4 +11,8 @@ import lombok.*;
 public class GenderDto {
     private Long id;
     private String name;
+
+    public GenderDto(Long id) {
+        this.id = id;
+    }
 }

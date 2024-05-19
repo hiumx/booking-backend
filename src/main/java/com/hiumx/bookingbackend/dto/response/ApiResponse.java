@@ -10,6 +10,7 @@ import lombok.*;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
+    @Builder.Default
     private Integer code = 1000;
     private String message = "Succeed";
     private T metadata;

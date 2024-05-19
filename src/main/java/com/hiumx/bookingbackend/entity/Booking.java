@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "bookings")
 @Builder
-public class Booking extends BaseEntity{
+public class Booking{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

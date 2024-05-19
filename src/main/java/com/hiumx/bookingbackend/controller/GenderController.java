@@ -1,6 +1,7 @@
 package com.hiumx.bookingbackend.controller;
 
 import com.hiumx.bookingbackend.dto.GenderDto;
+import com.hiumx.bookingbackend.dto.response.ApiResponse;
 import com.hiumx.bookingbackend.service.GenderService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +18,12 @@ public class GenderController {
     private GenderService genderService;
 
     @PostMapping
-    ResponseEntity<GenderDto> createGender(@RequestBody GenderDto genderDto) {
+    ApiResponse<?> createGender(@RequestBody GenderDto genderDto) {
         GenderDto genderSaved = genderService.createGender(genderDto);
-        return ResponseEntity.ok(genderSaved);
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Create gender successfully")
+                .metadata(genderSaved)
+                .build();
     }
 }

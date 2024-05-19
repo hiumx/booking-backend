@@ -1,6 +1,7 @@
 package com.hiumx.bookingbackend.controller;
 
-import com.hiumx.bookingbackend.dto.UserDto;
+import com.hiumx.bookingbackend.dto.request.UserCreationRequest;
+import com.hiumx.bookingbackend.dto.response.UserCreationResponse;
 import com.hiumx.bookingbackend.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -18,8 +19,9 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-        UserDto user = userService.createUser(userDto);
+    ResponseEntity<UserCreationResponse> createUser(@RequestBody @Valid UserCreationRequest userCreationRequest) {
+        UserCreationResponse user = userService.createUser(userCreationRequest);
         return ResponseEntity.ok(user);
     }
+
 }
