@@ -1,5 +1,6 @@
 package com.hiumx.bookingbackend.entity;
 
+import com.hiumx.bookingbackend.dto.RoleDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,4 +22,8 @@ public class Role {
     private String name;
 
     private String description;
+
+    public Role(Long id) {
+        this.id = id;
+    }
 }

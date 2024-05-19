@@ -20,4 +20,8 @@ public class Gender {
 
     @Column(nullable = false)
     private String name;
+
+    public Gender(Long id) {
+        this.id = id;
+    }
 }

@@ -1,32 +1,34 @@
 package com.hiumx.bookingbackend.mapper;
 
-import com.hiumx.bookingbackend.dto.UserDto;
+import com.hiumx.bookingbackend.dto.request.UserCreationRequest;
+import com.hiumx.bookingbackend.dto.response.UserCreationResponse;
+import com.hiumx.bookingbackend.entity.Gender;
+import com.hiumx.bookingbackend.entity.Role;
 import com.hiumx.bookingbackend.entity.User;
 
 public class UserMapper {
-    static User mapToUser(UserDto userDto) {
-        return new User(
-                userDto.getId(),
-                userDto.getEmail(),
-                userDto.getPhone(),
-                userDto.getName(),
-                userDto.getPassword(),
-                userDto.getDob(),
-                userDto.getGender(),
-                userDto.getAddress(),
-                userDto.getImage(),
-                userDto.getRole(),
-                userDto.getIsActive()
-        );
+    public static User toUser(UserCreationRequest userCreationRequest) {
+        return User.builder()
+                .email(userCreationRequest.getEmail())
+                .phone(userCreationRequest.getPhone())
+                .name(userCreationRequest.getName())
+                .password(userCreationRequest.getPassword())
+                .dob(userCreationRequest.getDob())
+                .gender(new Gender(userCreationRequest.getGenderId()))
+                .address(userCreationRequest.getAddress())
+                .image(userCreationRequest.getImage())
+                .role(new Role(userCreationRequest.getRoleId()))
+                .isActive(userCreationRequest.getIsActive())
+                .build();
+
     }
 
-    static UserDto mapToUser(User user) {
-        return new UserDto(
+    public static UserCreationResponse toUserResponse(User user) {
+        return new UserCreationResponse(
                 user.getId(),
                 user.getEmail(),
                 user.getPhone(),
                 user.getName(),
-                user.getPassword(),
                 user.getDob(),
                 user.getGender(),
                 user.getAddress(),
