@@ -4,8 +4,9 @@ import com.hiumx.bookingbackend.dto.request.AuthenticationRequest;
 import com.hiumx.bookingbackend.dto.request.IntrospectRequest;
 import com.hiumx.bookingbackend.dto.response.AuthenticationResponse;
 import com.hiumx.bookingbackend.dto.response.IntrospectResponse;
+import com.hiumx.bookingbackend.entity.User;
 import com.hiumx.bookingbackend.exception.ApplicationException;
-import com.hiumx.bookingbackend.exception.ErrorCode;
+import com.hiumx.bookingbackend.enums.ErrorCode;
 import com.hiumx.bookingbackend.repository.UserRepository;
 import com.hiumx.bookingbackend.service.AuthenticationService;
 import com.nimbusds.jose.*;
@@ -23,7 +24,6 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -35,16 +35,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             = "WUDIpBC14uxAzco8EZo8Llkuz1l1Q05IXnYBv7mOZLrrlJVWvK/ytCDoak0OdkgL";
     @Override
     public AuthenticationResponse signIn(AuthenticationRequest authenticationRequest) {
-        var user = !authenticationRequest.getEmail().isEmpty()
+        var user = !(authenticationRequest.getEmail() == null)
                 ? userRepository.findByEmail(authenticationRequest.getEmail())
                 : userRepository.findByPhone(authenticationRequest.getPhone());
-        System.out.println(user);
+
         if(user.isEmpty()) throw new ApplicationException(ErrorCode.AUTHENTICATION_ERROR);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         boolean isCorrect = passwordEncoder.matches(authenticationRequest.getPassword(), user.get().getPassword());
         if(!isCorrect) throw new ApplicationException(ErrorCode.PASSWORD_INCORRECT);
 
-        String token = generateToke(user.get().getEmail(), user.get().getPhone());
+        String token = generateToke(user.get());
 
         return AuthenticationResponse.builder()
                 .id(user.get().getId())
@@ -75,18 +75,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
     }
 
-    private String generateToke(String email, String phone) {
+    private String generateToke(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
+        String subject = user.getEmail() != null ? user.getEmail() : user.getPhone();
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(email)
-                .subject(phone)
+                .subject(subject)
                 .issuer("hiumx.online")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
-                .claim("customClaim", "Custom")
+                .claim("scope", user.getRole().getName().toUpperCase())
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
         JWSObject jwsObject = new JWSObject(header, payload);

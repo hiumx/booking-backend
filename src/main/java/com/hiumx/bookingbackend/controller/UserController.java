@@ -9,9 +9,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
-@CrossOrigin(value = "*")
+@CrossOrigin(value = "http://localhost:3000")
 @RequestMapping("/api/v1/users")
 public class UserController {
 
@@ -30,6 +32,16 @@ public class UserController {
                 .code(1000)
                 .message("Get user successfully")
                 .metadata(user)
+                .build();
+    }
+
+    @GetMapping()
+    ApiResponse<?> getAllUsers() {
+        List<UserCreationResponse> users = userService.getAllUsers();
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Get user successfully")
+                .metadata(users)
                 .build();
     }
 
