@@ -3,6 +3,8 @@ package com.hiumx.bookingbackend.service.impl;
 import com.hiumx.bookingbackend.dto.request.UserCreationRequest;
 import com.hiumx.bookingbackend.dto.response.UserCreationResponse;
 import com.hiumx.bookingbackend.entity.User;
+import com.hiumx.bookingbackend.exception.ApplicationException;
+import com.hiumx.bookingbackend.exception.ErrorCode;
 import com.hiumx.bookingbackend.mapper.UserMapper;
 import com.hiumx.bookingbackend.repository.UserRepository;
 import com.hiumx.bookingbackend.service.UserService;
@@ -23,5 +25,12 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User userSaved = userRepository.save(user);
         return UserMapper.toUserResponse(userSaved);
+    }
+
+    @Override
+    public UserCreationResponse getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+        return UserMapper.toUserResponse(user);
     }
 }
