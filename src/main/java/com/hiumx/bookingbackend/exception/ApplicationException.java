@@ -1,5 +1,6 @@
 package com.hiumx.bookingbackend.exception;
 
+import com.hiumx.bookingbackend.enums.ErrorCode;
 import lombok.Getter;
 import lombok.Setter;
 
