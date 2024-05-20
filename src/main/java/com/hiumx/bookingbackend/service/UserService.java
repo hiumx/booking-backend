@@ -5,4 +5,6 @@ import com.hiumx.bookingbackend.dto.response.UserCreationResponse;
 
 public interface UserService {
     UserCreationResponse createUser(UserCreationRequest userCreationRequest);
+
+    UserCreationResponse getUserById(Long id);
 }

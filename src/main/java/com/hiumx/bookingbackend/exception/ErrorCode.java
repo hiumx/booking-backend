@@ -12,6 +12,7 @@ public enum ErrorCode {
     KEY_INVALID(1004, "Key message invalid!"),
     AUTHENTICATION_ERROR(1005, "Email or phone number invalid!"),
     PASSWORD_INCORRECT(1006, "Password incorrect!"),
+    USER_NOT_FOUND(1007, "User not found!"),
     USER_EXISTED(1001, "User already existed!");
 
     private int code;

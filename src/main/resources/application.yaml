@@ -24,3 +24,6 @@ spring:
 
 # api:
   # prefix: api/v1
+
+jwt:
+  signerKey: "WUDIpBC14uxAzco8EZo8Llkuz1l1Q05IXnYBv7mOZLrrlJVWvK/ytCDoak0OdkgL"
