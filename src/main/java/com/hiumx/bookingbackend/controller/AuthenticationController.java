@@ -8,14 +8,12 @@ import com.hiumx.bookingbackend.dto.response.IntrospectResponse;
 import com.hiumx.bookingbackend.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 
 @RestController
+@CrossOrigin(value = "http://localhost:3000")
 @RequestMapping("/api/v1/auth")
 @AllArgsConstructor
 public class AuthenticationController {
