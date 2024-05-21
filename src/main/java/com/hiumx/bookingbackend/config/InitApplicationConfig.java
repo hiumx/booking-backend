@@ -1,6 +1,8 @@
 package com.hiumx.bookingbackend.config;
 
+import com.hiumx.bookingbackend.dto.request.RoleRequest;
 import com.hiumx.bookingbackend.dto.request.UserCreationRequest;
+import com.hiumx.bookingbackend.entity.Role;
 import com.hiumx.bookingbackend.entity.User;
 import com.hiumx.bookingbackend.repository.UserRepository;
 import com.hiumx.bookingbackend.service.UserService;
@@ -11,6 +13,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Configuration
 @AllArgsConstructor
 @Slf4j
@@ -20,11 +25,15 @@ public class InitApplicationConfig {
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository) {
         return args -> {
-            if(userRepository.findByEmail("admin@gmail.com").isEmpty()) {
+            Set<Long> defaultAdminRoles = new HashSet<>();
+            defaultAdminRoles.add(1L);
+            defaultAdminRoles.add(2L);
+            defaultAdminRoles.add(3L);
+            if(userRepository.findByEmail("admin@gmail.com") == null) {
                 UserCreationRequest request = UserCreationRequest.builder()
                         .email("admin@gmail.com")
                         .password("admin")
-                        .roleId(1L)
+                        .roleIds(defaultAdminRoles)
                         .build();
                 userService.createUser(request);
                 log.warn("Admin user has been created with default password: admin");

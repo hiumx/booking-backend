@@ -3,16 +3,14 @@ package com.hiumx.bookingbackend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "roles")
+@Table(name = "permissions")
 @Builder
 @Getter
 @Setter
-public class Role {
+public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,9 +20,4 @@ public class Role {
 
     private String description;
 
-    @ManyToMany
-    private Set<Permission> permissions;
-    public Role(Long id) {
-        this.id = id;
-    }
 }

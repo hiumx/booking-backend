@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 
 @NoArgsConstructor
@@ -22,6 +23,6 @@ public class UserCreationRequest {
     private Long genderId;
     private String address;
     private String image;
-    private Long roleId;
+    private Set<Long> roleIds;
     private Integer isActive;
 }

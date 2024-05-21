@@ -16,7 +16,8 @@ public enum ErrorCode {
     PASSWORD_INCORRECT(1006, "Incorrect password!", HttpStatus.BAD_REQUEST),
     USER_NOT_FOUND(1007, "User not found!", HttpStatus.NOT_FOUND),
     UNAUTHORIZED(1008, "Permission denied!", HttpStatus.FORBIDDEN),
-    UNAUTHENTICATED(1009, "Unauthenticated!", HttpStatus.UNAUTHORIZED)
+    UNAUTHENTICATED(1009, "Unauthenticated!", HttpStatus.UNAUTHORIZED),
+    EMAIL_OR_PHONE_EXISTED(1010, "Email or phone number already existed!", HttpStatus.BAD_REQUEST)
     ;
 
     private int code;
