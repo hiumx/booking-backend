@@ -1,16 +1,16 @@
-package com.hiumx.bookingbackend.dto;
+package com.hiumx.bookingbackend.dto.request;
 
 
 import lombok.*;
 
-@Getter
-@Setter
+import java.util.Set;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class RoleDto {
-    private Long id;
+public class RoleRequest {
     private String name;
     private String description;
+    private Set<Long> permissions;
 }

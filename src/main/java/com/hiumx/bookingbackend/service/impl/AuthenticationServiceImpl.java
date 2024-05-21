@@ -19,11 +19,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.StringJoiner;
 
 @Service
 @AllArgsConstructor
@@ -39,23 +41,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 ? userRepository.findByEmail(authenticationRequest.getEmail())
                 : userRepository.findByPhone(authenticationRequest.getPhone());
 
-        if(user.isEmpty()) throw new ApplicationException(ErrorCode.AUTHENTICATION_ERROR);
+        if(user == null) throw new ApplicationException(ErrorCode.AUTHENTICATION_ERROR);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        boolean isCorrect = passwordEncoder.matches(authenticationRequest.getPassword(), user.get().getPassword());
+        boolean isCorrect = passwordEncoder.matches(authenticationRequest.getPassword(), user.getPassword());
         if(!isCorrect) throw new ApplicationException(ErrorCode.PASSWORD_INCORRECT);
 
-        String token = generateToke(user.get());
+        String token = generateToke(user);
 
         return AuthenticationResponse.builder()
-                .id(user.get().getId())
-                .name(user.get().getName())
-                .phone(user.get().getPhone())
-                .image(user.get().getImage())
-                .email(user.get().getEmail())
-                .dob(user.get().getDob())
-                .address(user.get().getAddress())
-                .role(user.get().getRole())
-                .gender(user.get().getGender())
+                .id(user.getId())
+                .name(user.getName())
+                .phone(user.getPhone())
+                .image(user.getImage())
+                .email(user.getEmail())
+                .dob(user.getDob())
+                .address(user.getAddress())
+                .role(user.getRoles())
+                .gender(user.getGender())
                 .token(token)
                 .build();
     }
@@ -86,7 +88,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
-                .claim("scope", user.getRole().getName().toUpperCase())
+                .claim("scope", buildScope(user))
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
         JWSObject jwsObject = new JWSObject(header, payload);
@@ -97,5 +99,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         } catch (JOSEException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String buildScope(User user) {
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        if(!CollectionUtils.isEmpty(user.getRoles())) {
+            user.getRoles().forEach(role -> {
+                stringJoiner.add("ROLE_" + role.getName().toUpperCase());
+                if(!CollectionUtils.isEmpty(role.getPermissions()))
+                    role.getPermissions().forEach(permission -> stringJoiner.add(permission.getName()));
+            });
+        }
+        return stringJoiner.toString();
     }
 }

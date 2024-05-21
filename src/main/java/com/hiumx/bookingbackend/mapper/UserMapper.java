@@ -6,6 +6,8 @@ import com.hiumx.bookingbackend.entity.Gender;
 import com.hiumx.bookingbackend.entity.Role;
 import com.hiumx.bookingbackend.entity.User;
 
+import java.util.HashSet;
+
 public class UserMapper {
     public static User toUser(UserCreationRequest userCreationRequest) {
         return User.builder()
@@ -17,24 +19,24 @@ public class UserMapper {
                 .gender(new Gender(userCreationRequest.getGenderId()))
                 .address(userCreationRequest.getAddress())
                 .image(userCreationRequest.getImage())
-                .role(new Role(userCreationRequest.getRoleId()))
+                //.role(new Role(userCreationRequest.getRoleId()))
                 .isActive(userCreationRequest.getIsActive())
                 .build();
 
     }
 
     public static UserCreationResponse toUserResponse(User user) {
-        return new UserCreationResponse(
-                user.getId(),
-                user.getEmail(),
-                user.getPhone(),
-                user.getName(),
-                user.getDob(),
-                user.getGender(),
-                user.getAddress(),
-                user.getImage(),
-                user.getRole(),
-                user.getIsActive()
-        );
+
+        return UserCreationResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .name(user.getName())
+                .dob(user.getDob())
+                .gender(user.getGender())
+                .address(user.getAddress())
+                .image(user.getImage())
+                .roles((new HashSet<>(user.getRoles().stream().map(RoleMapper::toRoleResponse).toList())))
+                .build();
     }
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,7 +13,6 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "users")
 @Builder
-@Data
 public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,9 +37,8 @@ public class User{
     private String address;
     private String image;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @ManyToMany
+    private Set<Role> roles;
 
     @Column(name = "is_active")
     private Integer isActive;
