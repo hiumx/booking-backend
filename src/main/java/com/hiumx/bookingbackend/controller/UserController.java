@@ -6,6 +6,7 @@ import com.hiumx.bookingbackend.dto.response.UserCreationResponse;
 import com.hiumx.bookingbackend.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +21,13 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    ResponseEntity<UserCreationResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
+    ApiResponse<?> createUser(@RequestBody @Valid UserCreationRequest request) {
         UserCreationResponse user = userService.createUser(request);
-        return ResponseEntity.ok(user);
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Create new user successfully")
+                .metadata(user)
+                .build();
     }
 
     @GetMapping("{id}")
@@ -42,6 +47,26 @@ public class UserController {
                 .code(1000)
                 .message("Get user successfully")
                 .metadata(users)
+                .build();
+    }
+
+    @PutMapping("{id}")
+    ApiResponse<?> updateUser(@PathVariable("id") Long id, @RequestBody UserCreationRequest request) {
+        UserCreationResponse user = userService.updateUser(id, request);
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Get user successfully")
+                .metadata(user)
+                .build();
+    }
+
+    @GetMapping("/my-info")
+    ApiResponse<?> getMyInfo() {
+        UserCreationResponse user = userService.getMyInfo();
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Get my information successfully")
+                .metadata(user)
                 .build();
     }
 

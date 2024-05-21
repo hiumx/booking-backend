@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,6 +21,6 @@ public class UserCreationResponse {
     private Gender gender;
     private String address;
     private String image;
-    private Role role;
+    private Set<RoleResponse> roles;
     private Integer isActive;
 }

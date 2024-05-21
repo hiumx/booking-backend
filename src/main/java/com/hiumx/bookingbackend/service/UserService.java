@@ -9,5 +9,8 @@ public interface UserService {
     UserCreationResponse createUser(UserCreationRequest userCreationRequest);
     UserCreationResponse getUserById(Long id);
     List<UserCreationResponse> getAllUsers();
+    UserCreationResponse updateUser(Long id, UserCreationRequest userCreationRequest);
+
+    UserCreationResponse getMyInfo();
 
 }

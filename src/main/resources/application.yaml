@@ -11,7 +11,7 @@ spring:
     password: 123456
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:

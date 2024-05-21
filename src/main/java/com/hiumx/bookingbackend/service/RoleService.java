@@ -1,12 +1,13 @@
 package com.hiumx.bookingbackend.service;
 
-import com.hiumx.bookingbackend.dto.RoleDto;
+import com.hiumx.bookingbackend.dto.request.RoleRequest;
+import com.hiumx.bookingbackend.dto.response.RoleResponse;
 
 import java.util.List;
 
 public interface RoleService {
-    RoleDto createRole(RoleDto roleDto);
-    RoleDto getRoleById(Long id);
+    public RoleResponse createRole(RoleRequest request);
+    public RoleResponse getRoleById(Long id);
 
-    List<RoleDto> getAllRoles();
+    List<RoleResponse> getAllRoles();
 }

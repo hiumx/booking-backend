@@ -5,6 +5,7 @@ import com.hiumx.bookingbackend.entity.Role;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +19,7 @@ public class AuthenticationResponse {
     private LocalDate dob;
     private Gender gender;
     private String address;
-    private Role role;
+    private Set<Role> role;
     private String image;
     private String token;
 }
