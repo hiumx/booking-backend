@@ -17,6 +17,18 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: "maixuanhieu250123@gmail.com"
+    password: "zmfd aycm rzuu oarb"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
   # servlet:
     # multipart:
       # max-file-size: 10MB

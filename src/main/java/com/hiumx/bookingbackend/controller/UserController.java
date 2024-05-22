@@ -1,6 +1,7 @@
 package com.hiumx.bookingbackend.controller;
 
 import com.hiumx.bookingbackend.dto.request.UserCreationRequest;
+import com.hiumx.bookingbackend.dto.request.UserResetPasswordRequest;
 import com.hiumx.bookingbackend.dto.response.ApiResponse;
 import com.hiumx.bookingbackend.dto.response.UserCreationResponse;
 import com.hiumx.bookingbackend.service.UserService;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -67,6 +69,25 @@ public class UserController {
                 .code(1000)
                 .message("Get my information successfully")
                 .metadata(user)
+                .build();
+    }
+
+    @PatchMapping("{id}")
+    ApiResponse<?> updateInfoByField(@PathVariable("id") Long id, @RequestBody Map<String, Object> updates) {
+        UserCreationResponse user = userService.updateUserByField(id, updates);
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Update my information successfully")
+                .metadata(user)
+                .build();
+    }
+
+    @PatchMapping("/reset-password/{id}")
+    ApiResponse<?> resetPassword(@PathVariable("id") Long id, @Valid @RequestBody UserResetPasswordRequest request) {
+        userService.resetPassword(id, request);
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Reset password successfully")
                 .build();
     }
 
