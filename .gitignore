@@ -4,8 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-application*.yaml
-*.yaml
+#application*.yaml
+#*.yaml
 
 src/main/resources/application.yaml
 
