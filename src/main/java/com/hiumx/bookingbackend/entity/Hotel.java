@@ -26,7 +26,10 @@ public class Hotel {
     @JoinColumn(name = "type_id")
     private TypeHotel typeHotel;
     private String location;
-    private Float star;
+    private Float rate;
 
+    @ManyToOne
+    @JoinColumn(name = "manager_id")
+    private User managerId;
 
 }

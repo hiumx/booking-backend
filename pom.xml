@@ -64,6 +64,13 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>2.20.8</version> <!-- Make sure to use a valid version -->
+		</dependency>
+
+
 	</dependencies>
 
 	<build>

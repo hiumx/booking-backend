@@ -27,5 +27,5 @@ public class Room {
     @Column(name = "number_bed")
     private Integer numberBed;
 
-    private Integer price;
+    private Long price;
 }
