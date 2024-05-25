@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -15,5 +17,7 @@ public class HotelRequest {
     private Long typeId;
     private String location;
     private Float rate;
+    Set<Long> convenientIds;
+    Set<RoomRequest> rooms;
     private Long managerId;
 }

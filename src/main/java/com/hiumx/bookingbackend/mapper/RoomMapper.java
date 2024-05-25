@@ -1,6 +1,7 @@
 package com.hiumx.bookingbackend.mapper;
 
 import com.hiumx.bookingbackend.dto.request.RoomRequest;
+import com.hiumx.bookingbackend.dto.response.RoomCreationResponse;
 import com.hiumx.bookingbackend.dto.response.RoomResponse;
 import com.hiumx.bookingbackend.entity.Room;
 
@@ -21,6 +22,15 @@ public class RoomMapper {
                 .id(room.getId())
                 .name(room.getName())
                 .hotel(room.getHotel())
+                .numberBed(room.getNumberBed())
+                .price(room.getPrice())
+                .build();
+    }
+
+    public static RoomCreationResponse toRoomCreationResponse(Room room) {
+        return RoomCreationResponse.builder()
+                .id(room.getId())
+                .name(room.getName())
                 .numberBed(room.getNumberBed())
                 .price(room.getPrice())
                 .build();

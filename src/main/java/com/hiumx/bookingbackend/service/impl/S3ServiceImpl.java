@@ -1,6 +1,7 @@
 package com.hiumx.bookingbackend.service.impl;
 
 import com.hiumx.bookingbackend.service.S3Service;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,8 @@ public class S3ServiceImpl implements S3Service {
     @Autowired
     private final S3Client s3Client;
 
-    @Autowired
+    @Value("${aws.cloudFront.preUrl}")
+    private String prefixUrlCloudFront;
 
     @Value("${aws.s3.bucketName}")
     private String bucketName;
@@ -65,7 +67,7 @@ public class S3ServiceImpl implements S3Service {
                 PresignedGetObjectRequest presignedGetObjectRequest =
                         presigner.presignGetObject(getObjectPresignRequest);
 
-                urls.add(presignedGetObjectRequest.url().toString());
+                urls.add(prefixUrlCloudFront + "/" +key);
 
             } catch (S3Exception | IOException e) {
                 e.printStackTrace();

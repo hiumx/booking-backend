@@ -37,6 +37,7 @@ public class UserMapper {
                 .address(user.getAddress())
                 .image(user.getImage())
                 .roles((new HashSet<>(user.getRoles().stream().map(RoleMapper::toRoleResponse).toList())))
+                .isActive(user.getIsActive())
                 .build();
     }
 }
