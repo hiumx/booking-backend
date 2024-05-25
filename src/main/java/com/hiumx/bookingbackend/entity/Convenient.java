@@ -1,17 +1,18 @@
 package com.hiumx.bookingbackend.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+import java.util.Set;
+
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "convenients")
 @Builder
+@Getter
+@Setter
 public class Convenient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,4 +20,7 @@ public class Convenient {
 
     @Column(nullable = false)
     private String name;
+
+    @ManyToMany(mappedBy = "convenients")
+    private Set<Hotel> hotels;
 }

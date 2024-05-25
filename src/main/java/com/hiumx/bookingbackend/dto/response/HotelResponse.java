@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -15,8 +17,11 @@ public class HotelResponse {
     private Long id;
     private String name;
     private String description;
-    private TypeHotel typeHotel;
     private String location;
     private Float rate;
-    private User managerId;
+    private TypeHotelResponse typeHotelResponse;
+    private Set<ConvenientResponse> convenientsResponse;
+    private Set<ImageResponse> imagesResponse;
+    private Set<RoomCreationResponse> roomResponses;
+    private UserCreationResponse manager;
 }

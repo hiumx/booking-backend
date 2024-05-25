@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,4 +21,7 @@ public class TypeHotel {
 
     @Column(nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "typeHotel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Hotel> hotels;
 }

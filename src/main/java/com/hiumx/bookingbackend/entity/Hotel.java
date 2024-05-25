@@ -1,10 +1,9 @@
 package com.hiumx.bookingbackend.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.Set;
 
 
 @AllArgsConstructor
@@ -12,6 +11,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "hotels")
 @Builder
+@Getter
+@Setter
+@Data
 public class Hotel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +29,20 @@ public class Hotel {
     private TypeHotel typeHotel;
     private String location;
     private Float rate;
+
+    @ManyToMany
+    @JoinTable(
+            name = "hotel_convenient",
+            joinColumns = @JoinColumn(name = "hotel_id"),
+            inverseJoinColumns = @JoinColumn(name = "convenient_id")
+    )
+    private Set<Convenient> convenients;
+
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Room> rooms;
+
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Image> images;
 
     @ManyToOne
     @JoinColumn(name = "manager_id")

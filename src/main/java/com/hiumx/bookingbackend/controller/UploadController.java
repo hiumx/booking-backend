@@ -36,14 +36,14 @@ public class UploadController {
 
     @PostMapping
     public ApiResponse<?> uploadFiles(@RequestParam("files") MultipartFile[] files) {
-        List<String> keys = s3Service.uploadFiles(files);
-        List<String> fileUrls = keys.stream()
-                .map(key -> "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + key)
-                .toList();
+        List<String> urls = s3Service.uploadFiles(files);
+//        List<String> fileUrls = keys.stream()
+//                .map(key -> "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + key)
+//                .toList();
         return ApiResponse.builder()
                 .code(1000)
                 .message("Upload multiple files successfully")
-                .metadata(keys)
+                .metadata(urls)
                 .build();
     }
 }
