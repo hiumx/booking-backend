@@ -1,5 +1,6 @@
 package com.hiumx.bookingbackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,8 +9,7 @@ import lombok.*;
 @Entity
 @Table(name = "rooms")
 @Builder
-@Getter
-@Setter
+@Data
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

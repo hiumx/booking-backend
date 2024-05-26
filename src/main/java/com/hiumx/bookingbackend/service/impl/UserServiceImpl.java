@@ -8,7 +8,6 @@ import com.hiumx.bookingbackend.entity.Role;
 import com.hiumx.bookingbackend.entity.User;
 import com.hiumx.bookingbackend.exception.ApplicationException;
 import com.hiumx.bookingbackend.enums.ErrorCode;
-import com.hiumx.bookingbackend.mapper.RoleMapper;
 import com.hiumx.bookingbackend.mapper.UserMapper;
 import com.hiumx.bookingbackend.repository.RoleRepository;
 import com.hiumx.bookingbackend.repository.UserRepository;

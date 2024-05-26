@@ -38,4 +38,12 @@ public class ImageServiceImpl implements ImageService {
         }
         return listImagesRes;
     }
+
+    @Override
+    public List<ImageResponse> findByHotelId(Long hotelId) {
+        hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.HOTEL_NOT_FOUND));
+        List<Image> images = imageRepository.findByHotelId(hotelId);
+        return images.stream().map(ImageMapper::toImageResponse).toList();
+    }
 }

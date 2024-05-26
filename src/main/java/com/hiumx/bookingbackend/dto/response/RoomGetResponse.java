@@ -1,5 +1,6 @@
 package com.hiumx.bookingbackend.dto.response;
 
+import com.hiumx.bookingbackend.entity.Hotel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,8 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-public class ImageResponse {
+public class RoomGetResponse {
     private Long id;
-    private String url;
-//    private Long hotelId;
+    private String name;
+    private Long hotelId;
+    private Integer numberBed;
+    private Long price;
 }

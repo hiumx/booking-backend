@@ -1,5 +1,6 @@
 package com.hiumx.bookingbackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,8 +9,7 @@ import lombok.*;
 @Entity
 @Table(name = "images")
 @Builder
-@Getter
-@Setter
+@Data
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,8 +18,9 @@ public class Image {
     @Column(nullable = false)
     private String url;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hotel_id")
+    @ManyToOne
+    @JoinColumn(name = "hotel_id", nullable = false)
+//    @JsonIgnore
     private Hotel hotel;
 
 }
