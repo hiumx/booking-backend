@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ImageService {
     List<ImageResponse> upload(ImageRequest request);
+
+    List<ImageResponse> findByHotelId(Long hotelId);
 }

@@ -35,4 +35,14 @@ public class ImageController {
                 .metadata(listRes)
                 .build();
     }
+
+    @GetMapping("{hotelId}")
+    public ApiResponse<?> getImagesByHotelId(@PathVariable("hotelId") Long hotelId) {
+        List<ImageResponse> imageResponses = imageService.findByHotelId(hotelId);
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Get all images by hotel id successfully")
+                .metadata(imageResponses)
+                .build();
+    }
 }

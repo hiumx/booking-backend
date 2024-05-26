@@ -8,8 +8,7 @@ import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "users")
 @Builder
@@ -32,7 +31,7 @@ public class User{
     private LocalDate dob;
 
     @ManyToOne
-    @JoinColumn(name = "gender_id")
+    @JoinColumn(name = "gender_id", columnDefinition = "LONG")
     private Gender gender;
     private String address;
     private String image;

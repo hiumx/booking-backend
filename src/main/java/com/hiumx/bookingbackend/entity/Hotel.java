@@ -1,5 +1,6 @@
 package com.hiumx.bookingbackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,8 +12,6 @@ import java.util.Set;
 @Entity
 @Table(name = "hotels")
 @Builder
-@Getter
-@Setter
 @Data
 public class Hotel {
     @Id
@@ -41,11 +40,12 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Room> rooms;
 
-    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "hotel")
     private Set<Image> images;
 
     @ManyToOne
     @JoinColumn(name = "manager_id")
+    @JsonIgnore
     private User managerId;
 
 }

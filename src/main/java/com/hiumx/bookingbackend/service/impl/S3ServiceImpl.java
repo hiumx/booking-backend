@@ -1,7 +1,6 @@
 package com.hiumx.bookingbackend.service.impl;
 
 import com.hiumx.bookingbackend.service.S3Service;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
