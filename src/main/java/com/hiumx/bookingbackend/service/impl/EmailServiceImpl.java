@@ -25,14 +25,18 @@ public class EmailServiceImpl implements EmailService {
 
     private UserRepository userRepository;
 
+//    @Value("${random-password}")
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final int PASSWORD_LENGTH = 8;
+
+//    @Value("${spring.mail.username}")
+    private final String from = "maixuanhieu250123@gmail.com";
 
 //    @Value("${}")
     @Override
     public void sendSimpleEmail(EmailRequest request) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("maixuanhieu250123@gmail.com");
+        message.setFrom(from);
 
         User userFounded = userRepository.findByEmail(request.getToEmail());
         if(userFounded == null) throw new ApplicationException(ErrorCode.EMAIL_INVALID);
