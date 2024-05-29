@@ -27,6 +27,9 @@ public class Hotel {
     @JoinColumn(name = "type_id")
     private TypeHotel typeHotel;
     private String location;
+
+    @Column(name = "from_center", columnDefinition = "FLOAT")
+    private Float fromCenter;
     private Float rate;
 
     @ManyToMany
@@ -42,6 +45,9 @@ public class Hotel {
 
     @OneToMany(mappedBy = "hotel")
     private Set<Image> images;
+
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Review> reviews;
 
     @ManyToOne
     @JoinColumn(name = "manager_id")

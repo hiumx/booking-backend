@@ -4,6 +4,7 @@ import com.hiumx.bookingbackend.dto.request.HotelRequest;
 import com.hiumx.bookingbackend.dto.response.ApiResponse;
 import com.hiumx.bookingbackend.dto.response.HotelGetAllResponse;
 import com.hiumx.bookingbackend.dto.response.HotelResponse;
+import com.hiumx.bookingbackend.dto.response.HotelSearchAllResponse;
 import com.hiumx.bookingbackend.service.HotelService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +47,16 @@ public class HotelController {
         return ApiResponse.builder()
                 .code(1000)
                 .message("Get all hotels successfully")
+                .metadata(res)
+                .build();
+    }
+
+    @GetMapping("/search-result")
+    public ApiResponse<?> getSearchResult() {
+        List<HotelSearchAllResponse> res = hotelService.getSearchHotel();
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Get result of search hotel successfully")
                 .metadata(res)
                 .build();
     }

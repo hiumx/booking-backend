@@ -1,6 +1,8 @@
 package com.hiumx.bookingbackend.config;
 
 import com.hiumx.bookingbackend.dto.request.IntrospectRequest;
+import com.hiumx.bookingbackend.enums.ErrorCode;
+import com.hiumx.bookingbackend.exception.ApplicationException;
 import com.hiumx.bookingbackend.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,8 @@ public class CustomJwtDecoder implements JwtDecoder {
                     .build());
 
             if (!response.isValid())
-                throw new JwtException("Token invalid");
+                throw new ApplicationException(ErrorCode.TOKEN_INVALID);
+
         } catch (JOSEException | ParseException e) {
             throw new JwtException(e.getMessage());
         }
@@ -48,6 +51,13 @@ public class CustomJwtDecoder implements JwtDecoder {
                     .build();
         }
 
-        return nimbusJwtDecoder.decode(token);
+        Jwt jwt = null;
+        try {
+            jwt = nimbusJwtDecoder.decode(token);
+        } catch (RuntimeException e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
+
+        return jwt;
     }
 }

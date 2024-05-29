@@ -2,9 +2,7 @@ package com.hiumx.bookingbackend.service.impl;
 
 import com.hiumx.bookingbackend.dto.request.HotelRequest;
 import com.hiumx.bookingbackend.dto.request.RoomRequest;
-import com.hiumx.bookingbackend.dto.response.HotelGetAllResponse;
-import com.hiumx.bookingbackend.dto.response.HotelResponse;
-import com.hiumx.bookingbackend.dto.response.RoomCreationResponse;
+import com.hiumx.bookingbackend.dto.response.*;
 import com.hiumx.bookingbackend.entity.*;
 import com.hiumx.bookingbackend.enums.ErrorCode;
 import com.hiumx.bookingbackend.exception.ApplicationException;
@@ -12,15 +10,16 @@ import com.hiumx.bookingbackend.mapper.*;
 import com.hiumx.bookingbackend.repository.*;
 import com.hiumx.bookingbackend.service.HotelService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class HotelServiceImpl implements HotelService {
 
     private HotelRepository hotelRepository;
@@ -29,6 +28,7 @@ public class HotelServiceImpl implements HotelService {
     private RoomRepository roomRepository;
     private UserRepository userRepository;
     private ImageRepository imageRepository;
+    private ReviewRepository reviewRepository;
 
     @Override
     public HotelResponse create(HotelRequest request) {
@@ -68,7 +68,6 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public List<HotelGetAllResponse> getAll() {
         List<Hotel> hotels = hotelRepository.findAll();
-
         List<HotelGetAllResponse> hotelResponses = hotels.stream().map(HotelMapper::toHotelGetAllResponse).toList();
         for(HotelGetAllResponse hotelRes: hotelResponses) {
             List<Image> imagesFounded = imageRepository.findByHotelId(hotelRes.getId());
@@ -97,4 +96,31 @@ public class HotelServiceImpl implements HotelService {
 
         return  hotelResponse;
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<HotelSearchAllResponse> getSearchHotel() {
+        List<Hotel> hotels = hotelRepository.findAll();
+        List<HotelSearchAllResponse> res = hotels.stream().map(HotelMapper::toHotelSearchAllResponse).toList();
+        for (int i = 0; i < hotels.size(); i++) {
+            RoomCreationResponse room =
+                    RoomMapper.toRoomCreationResponse(roomRepository.findByHotelId(hotels.get(i).getId()).getFirst());
+            res.get(i).setRoom(room);
+
+            List<ReviewGetAllHotelResponse> reviewResponse =
+                    reviewRepository.findByHotelId(
+                            hotels.get(i).getId()).stream().map(ReviewMapper::toReviewGetAllHotelResponse
+                    ).toList();
+            res.get(i).setReviews(reviewResponse);
+
+            ImageResponse imageResponse =
+                    ImageMapper.toImageResponse(
+                            imageRepository.findByHotelId(hotels.get(i).getId()).getFirst()
+                    );
+            res.get(i).setImage(imageResponse);
+
+        }
+        return res;
+    }
+
 }

@@ -39,6 +39,9 @@ public class User{
     @ManyToMany
     private Set<Role> roles;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Review> reviews;
+
     @Column(name = "is_active")
     private Integer isActive;
 }

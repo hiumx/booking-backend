@@ -25,6 +25,7 @@ public enum ErrorCode {
     CURRENT_PASSWORD_INVALID(1014, "Current password incorrect!", HttpStatus.BAD_REQUEST),
     HOTEL_NOT_FOUND(1014, "Hotel not found!", HttpStatus.NOT_FOUND),
     TYPE_HOTEL_NOT_FOUND(1014, "Type hotel not found!", HttpStatus.NOT_FOUND),
+    TOKEN_INVALID(1015, "Token invalid!", HttpStatus.UNAUTHORIZED),
     ;
 
     private int code;
