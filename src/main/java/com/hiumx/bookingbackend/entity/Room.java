@@ -26,4 +26,6 @@ public class Room {
     private Integer numberBed;
 
     private Long price;
+
+
 }

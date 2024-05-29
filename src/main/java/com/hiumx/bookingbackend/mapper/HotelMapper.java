@@ -3,10 +3,12 @@ package com.hiumx.bookingbackend.mapper;
 import com.hiumx.bookingbackend.dto.request.HotelRequest;
 import com.hiumx.bookingbackend.dto.response.HotelGetAllResponse;
 import com.hiumx.bookingbackend.dto.response.HotelResponse;
+import com.hiumx.bookingbackend.dto.response.HotelSearchAllResponse;
 import com.hiumx.bookingbackend.entity.Hotel;
 import com.hiumx.bookingbackend.entity.User;
 
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 public class HotelMapper {
     public static Hotel toHotel(HotelRequest request) {
@@ -39,6 +41,17 @@ public class HotelMapper {
                 .typeHotelResponse(TypeHotelMapper.toTypeHotelResponse(hotel.getTypeHotel()))
                 .rate(hotel.getRate())
                 .managerId(hotel.getManagerId().getId())
+                .build();
+    }
+
+    public static HotelSearchAllResponse toHotelSearchAllResponse(Hotel hotel) {
+        return HotelSearchAllResponse.builder()
+                .id(hotel.getId())
+                .name(hotel.getName())
+                .location(hotel.getLocation())
+                .rate(hotel.getRate())
+                .typeHotel(TypeHotelMapper.toTypeHotelResponse(hotel.getTypeHotel()))
+                .fromCenter(hotel.getFromCenter())
                 .build();
     }
 }

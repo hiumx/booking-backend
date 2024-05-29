@@ -26,10 +26,16 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final String[] PUBLIC_ENDPOINTS
+    private final String[] PUBLIC_POST_ENDPOINTS
             = {
                 "/api/v1/users", "/api/v1/auth/sign-in", "/api/v1/auth/logout",
                 "/api/v1/auth/introspect", "/api/v1/emails/send-mail"
+            };
+
+    private final String[] PUBLIC_GET_ENDPOINTS
+            = {
+                "/api/v1/type-hotel", "/api/v1/convenients", "/api/v1/hotels",
+                "/api/v1/hotels/search-result"
             };
 
     @Autowired
@@ -38,8 +44,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
        httpSecurity.authorizeHttpRequests(
-               request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-//                       .requestMatchers(HttpMethod.GET, "/api/v1/users")
+               request -> request.requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
+                       .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
 //                       .hasRole(Role.ADMIN.name())
                        .anyRequest().authenticated()
        );

@@ -6,31 +6,31 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "tokens")
+@Table(name = "reviews")
 @Builder
-public class Token {
+@Data
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String token;
+    private String title;
 
-    @Column(name = "token_type", nullable = false)
-    private String tokenType;
-
-    @Column(name = "expiration_date")
-    private LocalDateTime expirationDate;
-
-    private Integer expired;
+    @Column(nullable = false)
+    private String content;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "hotel_id", nullable = false)
+    private Hotel hotel;
+
+    private Float point;
+
 }
