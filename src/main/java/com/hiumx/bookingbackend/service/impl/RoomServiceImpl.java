@@ -1,5 +1,6 @@
 package com.hiumx.bookingbackend.service.impl;
 
+import com.hiumx.bookingbackend.document.RoomDocument;
 import com.hiumx.bookingbackend.dto.request.RoomRequest;
 import com.hiumx.bookingbackend.dto.response.RoomGetResponse;
 import com.hiumx.bookingbackend.dto.response.RoomResponse;
@@ -10,6 +11,7 @@ import com.hiumx.bookingbackend.exception.ApplicationException;
 import com.hiumx.bookingbackend.mapper.RoomMapper;
 import com.hiumx.bookingbackend.repository.HotelRepository;
 import com.hiumx.bookingbackend.repository.RoomRepository;
+import com.hiumx.bookingbackend.repository.document.RoomDocumentRepository;
 import com.hiumx.bookingbackend.service.RoomService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,8 +23,8 @@ import java.util.List;
 public class RoomServiceImpl implements RoomService {
 
     private RoomRepository roomRepository;
-
     private HotelRepository hotelRepository;
+    private RoomDocumentRepository roomDocumentRepository;
 
 
     @Override
@@ -43,6 +45,23 @@ public class RoomServiceImpl implements RoomService {
 
         List<Room> rooms = roomRepository.findByHotelId(hotelId);
 
+        return rooms.stream().map(RoomMapper::toRoomGetResponse).toList();
+    }
+
+    @Override
+    public List<RoomGetResponse> getAll() {
+        List<Room> rooms = roomRepository.findAll();
+//        for(Room r : rooms) {
+//            roomDocumentRepository.save(
+//                    RoomDocument.builder()
+//                            .id(r.getId())
+//                            .name(r.getName())
+//                            .numberBed(r.getNumberBed())
+//                            .price(r.getPrice())
+//                            .hotelId(r.getHotel().getId())
+//                            .build()
+//            );
+//        }
         return rooms.stream().map(RoomMapper::toRoomGetResponse).toList();
     }
 }

@@ -1,7 +1,8 @@
 package com.hiumx.bookingbackend.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+
+import jakarta.persistence.*;
 
 @AllArgsConstructor
 @NoArgsConstructor

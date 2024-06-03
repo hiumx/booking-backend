@@ -7,6 +7,8 @@ import com.hiumx.bookingbackend.service.ReviewService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/reviews")
 @CrossOrigin(value = "http://localhost:3000")
@@ -22,6 +24,16 @@ public class ReviewController {
                 .code(1000)
                 .message("Get review successfully")
                 .metadata(reviewResponse)
+                .build();
+    }
+
+    @GetMapping
+    public ApiResponse<?> getAll() {
+        List<ReviewResponse> reviewsResponse = reviewService.getAll();
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Get review successfully")
+                .metadata(reviewsResponse)
                 .build();
     }
 }

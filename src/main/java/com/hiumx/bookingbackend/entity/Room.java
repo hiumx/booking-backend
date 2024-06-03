@@ -19,7 +19,7 @@ public class Room {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hotel_id")
+    @JoinColumn(name = "hotel_id", nullable = false, referencedColumnName = "id")
     private Hotel hotel;
 
     @Column(name = "number_bed")

@@ -45,4 +45,14 @@ public class ImageController {
                 .metadata(imageResponses)
                 .build();
     }
+
+    @GetMapping()
+    public ApiResponse<?> getAll() {
+        List<ImageResponse> imageResponses = imageService.getAll();
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Get all images successfully")
+                .metadata(imageResponses)
+                .build();
+    }
 }

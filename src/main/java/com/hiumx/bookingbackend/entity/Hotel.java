@@ -1,9 +1,10 @@
 package com.hiumx.bookingbackend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import lombok.*;
 
+import jakarta.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -33,18 +34,19 @@ public class Hotel {
     private Float rate;
 
     @ManyToMany
-    @JoinTable(
-            name = "hotel_convenient",
-            joinColumns = @JoinColumn(name = "hotel_id"),
-            inverseJoinColumns = @JoinColumn(name = "convenient_id")
-    )
+//    @JoinTable(
+//            name = "hotel_convenient",
+//            joinColumns = @JoinColumn(name = "hotel_id"),
+//            inverseJoinColumns = @JoinColumn(name = "convenient_id")
+//    )
     private Set<Convenient> convenients;
 
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Room> rooms;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "hotel")
-    private Set<Image> images;
+    private Set<Image> images = new HashSet<>();
 
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Review> reviews;
