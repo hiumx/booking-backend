@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,4 +25,7 @@ public class PaymentCard {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "paymentCard", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Booking> bookings;
 }

@@ -1,5 +1,6 @@
 package com.hiumx.bookingbackend.mapper;
 
+import com.hiumx.bookingbackend.document.ReviewDocument;
 import com.hiumx.bookingbackend.dto.request.ReviewRequest;
 import com.hiumx.bookingbackend.dto.response.ReviewGetAllHotelResponse;
 import com.hiumx.bookingbackend.dto.response.ReviewResponse;
@@ -26,6 +27,16 @@ public class ReviewMapper {
 
     public static ReviewGetAllHotelResponse toReviewGetAllHotelResponse(Review review) {
         return ReviewGetAllHotelResponse.builder()
+                .point(review.getPoint())
+                .build();
+    }
+
+    public static ReviewDocument toReviewDocument(Review review) {
+        return ReviewDocument.builder()
+                .id(review.getId())
+                .title(review.getTitle())
+                .content(review.getContent())
+                .userId(review.getUser().getId())
                 .point(review.getPoint())
                 .build();
     }

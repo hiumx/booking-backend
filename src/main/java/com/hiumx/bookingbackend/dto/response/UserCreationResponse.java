@@ -1,8 +1,6 @@
 package com.hiumx.bookingbackend.dto.response;
 
 import com.hiumx.bookingbackend.entity.Gender;
-import com.hiumx.bookingbackend.entity.Role;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;

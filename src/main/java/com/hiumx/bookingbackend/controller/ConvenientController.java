@@ -1,13 +1,11 @@
 package com.hiumx.bookingbackend.controller;
 
+import com.hiumx.bookingbackend.dto.request.ConvenientRequest;
 import com.hiumx.bookingbackend.dto.response.ApiResponse;
 import com.hiumx.bookingbackend.dto.response.ConvenientResponse;
 import com.hiumx.bookingbackend.service.ConvenientService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +24,16 @@ public class ConvenientController {
                 .code(1000)
                 .message("Get all convenients successfully")
                 .metadata(convenientResponses)
+                .build();
+    }
+
+    @PostMapping
+    public ApiResponse<?> create(@RequestBody ConvenientRequest request) {
+        ConvenientResponse convenientResponse = convenientService.create(request);
+        return ApiResponse.builder()
+                .code(1000)
+                .metadata("Create convenient successfully")
+                .metadata(convenientResponse)
                 .build();
     }
 }

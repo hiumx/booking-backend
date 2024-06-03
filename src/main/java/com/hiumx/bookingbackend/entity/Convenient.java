@@ -1,8 +1,8 @@
 package com.hiumx.bookingbackend.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
 
+import jakarta.persistence.*;
 import java.util.Set;
 
 
@@ -20,6 +20,6 @@ public class Convenient {
     @Column(nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "convenients")
-    private Set<Hotel> hotels;
+//    @ManyToMany(mappedBy = "convenients")
+//    private Set<Hotel> hotels;
 }

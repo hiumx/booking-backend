@@ -26,6 +26,8 @@ public enum ErrorCode {
     HOTEL_NOT_FOUND(1014, "Hotel not found!", HttpStatus.NOT_FOUND),
     TYPE_HOTEL_NOT_FOUND(1014, "Type hotel not found!", HttpStatus.NOT_FOUND),
     TOKEN_INVALID(1015, "Token invalid!", HttpStatus.UNAUTHORIZED),
+    PAYMENT_CARD_NOT_FOUND(1016, "Payment card not found!", HttpStatus.NOT_FOUND),
+    ROOM_NOT_FOUND(1017, "Room not found!", HttpStatus.NOT_FOUND),
     ;
 
     private int code;

@@ -1,6 +1,5 @@
 package com.hiumx.bookingbackend.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,9 +17,8 @@ public class Image {
     @Column(nullable = false)
     private String url;
 
-    @ManyToOne
-    @JoinColumn(name = "hotel_id", nullable = false)
-//    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "hotel_id", nullable = false, referencedColumnName = "id")
     private Hotel hotel;
 
 }

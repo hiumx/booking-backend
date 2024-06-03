@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface RoomService {
     RoomResponse create(RoomRequest request);
-
     List<RoomGetResponse> getRoomsByHotelId(Long hotelId);
+    List<RoomGetResponse> getAll();
 }

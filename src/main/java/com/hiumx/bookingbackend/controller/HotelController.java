@@ -1,11 +1,13 @@
 package com.hiumx.bookingbackend.controller;
 
+import com.hiumx.bookingbackend.document.HotelDocument;
 import com.hiumx.bookingbackend.dto.request.HotelRequest;
 import com.hiumx.bookingbackend.dto.response.ApiResponse;
 import com.hiumx.bookingbackend.dto.response.HotelGetAllResponse;
 import com.hiumx.bookingbackend.dto.response.HotelResponse;
 import com.hiumx.bookingbackend.dto.response.HotelSearchAllResponse;
 import com.hiumx.bookingbackend.service.HotelService;
+import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,13 +53,23 @@ public class HotelController {
                 .build();
     }
 
-    @GetMapping("/search-result")
-    public ApiResponse<?> getSearchResult() {
-        List<HotelSearchAllResponse> res = hotelService.getSearchHotel();
+    @GetMapping("/find-by-location")
+    public ApiResponse<?> getByLocation(@RequestParam("location") String location) {
+        List<HotelDocument> res = hotelService.getByLocation(location);
         return ApiResponse.builder()
                 .code(1000)
-                .message("Get result of search hotel successfully")
+                .message("Get all hotels successfully")
                 .metadata(res)
                 .build();
     }
+
+//    @GetMapping("/search-result")
+//    public ApiResponse<?> getSearchResult() {
+//        List<HotelSearchAllResponse> res = hotelService.getSearchHotel();
+//        return ApiResponse.builder()
+//                .code(1000)
+//                .message("Get result of search hotel successfully")
+//                .metadata(res)
+//                .build();
+//    }
 }

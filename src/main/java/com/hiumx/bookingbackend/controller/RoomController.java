@@ -37,4 +37,14 @@ public class RoomController {
                 .metadata(roomsResponse)
                 .build();
     }
+
+    @GetMapping()
+    public ApiResponse<?> getAll() {
+        List<RoomGetResponse> roomsResponse = roomService.getAll();
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Get all rooms successfully")
+                .metadata(roomsResponse)
+                .build();
+    }
 }
