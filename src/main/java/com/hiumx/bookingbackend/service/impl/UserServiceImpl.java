@@ -11,7 +11,9 @@ import com.hiumx.bookingbackend.enums.ErrorCode;
 import com.hiumx.bookingbackend.mapper.UserMapper;
 import com.hiumx.bookingbackend.repository.RoleRepository;
 import com.hiumx.bookingbackend.repository.UserRepository;
+import com.hiumx.bookingbackend.service.S3Service;
 import com.hiumx.bookingbackend.service.UserService;
+import com.hiumx.bookingbackend.utils.AvatarGenerator;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.awt.image.BufferedImage;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -29,6 +32,8 @@ public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
     private RoleRepository roleRepository;
+    private S3Service s3Service;
+
     @Override
     public UserCreationResponse createUser(UserCreationRequest request) {
 
@@ -50,7 +55,15 @@ public class UserServiceImpl implements UserService {
             request.setIsActive(1);
 
         if(request.getImage() == null)
-            request.setImage("https://hiumx.online/image/user/defaut-img.png");
+            request.setImage("https://d8271hh5ynwda.cloudfront.net/user-img.jpg");
+
+//        String name = request.getEmail();
+//        if(name == null) name = "A";
+//
+//        BufferedImage avatar = AvatarGenerator.generateAvatar(name);
+//        String fileName = name.toLowerCase() + "-avatar.png";
+//        String imageUrl = s3Service.u(fileName, avatarImage);
+//        System.out.println("Buffer: " + avatar);
 
         User user = UserMapper.toUser(request);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);

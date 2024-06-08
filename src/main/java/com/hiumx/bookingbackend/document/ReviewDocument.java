@@ -10,6 +10,8 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
+@Setter
 @Document(indexName = "reviews")
 public class ReviewDocument {
 

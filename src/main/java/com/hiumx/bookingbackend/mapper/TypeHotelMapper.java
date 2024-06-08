@@ -19,6 +19,13 @@ public class TypeHotelMapper {
                 .build();
     }
 
+    public static TypeHotelResponse toTypeHotelResponseFromDocument(TypeHotelDocument typeHotel) {
+        return TypeHotelResponse.builder()
+                .id(typeHotel.getId())
+                .name(typeHotel.getName())
+                .build();
+    }
+
     public static TypeHotelDocument toTypeHotelDocument(TypeHotel typeHotel) {
         return TypeHotelDocument.builder()
                 .id(typeHotel.getId())

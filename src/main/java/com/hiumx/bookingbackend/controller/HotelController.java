@@ -48,7 +48,7 @@ public class HotelController {
         HotelResponse res = hotelService.getById(id);
         return ApiResponse.builder()
                 .code(1000)
-                .message("Get all hotels successfully")
+                .message("Get hotel by id successfully")
                 .metadata(res)
                 .build();
     }

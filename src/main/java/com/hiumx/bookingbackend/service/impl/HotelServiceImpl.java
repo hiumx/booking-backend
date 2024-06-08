@@ -1,6 +1,7 @@
 package com.hiumx.bookingbackend.service.impl;
 
 import com.hiumx.bookingbackend.document.HotelDocument;
+import com.hiumx.bookingbackend.document.ReviewDocument;
 import com.hiumx.bookingbackend.dto.request.HotelRequest;
 import com.hiumx.bookingbackend.dto.request.RoomRequest;
 import com.hiumx.bookingbackend.dto.response.*;
@@ -10,6 +11,7 @@ import com.hiumx.bookingbackend.exception.ApplicationException;
 import com.hiumx.bookingbackend.mapper.*;
 import com.hiumx.bookingbackend.repository.*;
 import com.hiumx.bookingbackend.repository.document.HotelDocumentRepository;
+import com.hiumx.bookingbackend.repository.document.ReviewDocumentRepository;
 import com.hiumx.bookingbackend.service.ConvenientService;
 import com.hiumx.bookingbackend.service.HotelService;
 import com.hiumx.bookingbackend.service.RoomService;
@@ -34,6 +36,7 @@ public class HotelServiceImpl implements HotelService {
     private ImageRepository imageRepository;
     private ReviewRepository reviewRepository;
     private HotelDocumentRepository hotelDocumentRepository;
+    private ReviewDocumentRepository reviewDocumentRepository;
 
     private RoomService roomService;
 
@@ -62,11 +65,11 @@ public class HotelServiceImpl implements HotelService {
         }
 
         HotelResponse hotelResponse = HotelMapper.toHotelResponse(hotelSaved);
-        hotelResponse.setTypeHotelResponse(TypeHotelMapper.toTypeHotelResponse(typeHotelFounded));
-        hotelResponse.setConvenientsResponse(
+        hotelResponse.setTypeHotel(TypeHotelMapper.toTypeHotelResponse(typeHotelFounded));
+        hotelResponse.setConvenients(
             new HashSet<>(convenients.stream().map(ConvenientMapper::toConvenientResponse).toList())
         );
-        hotelResponse.setRoomResponses(new HashSet<>(roomResponses));
+        hotelResponse.setRooms(new HashSet<>(roomResponses));
         hotelResponse.setManager(UserMapper.toUserResponse(user));
 
         return hotelResponse;
@@ -75,27 +78,28 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public List<HotelGetAllResponse> getAll() {
         List<Hotel> hotels = hotelRepository.findAll();
-//        for (Hotel h: hotels) {
-//            List<Image> imagesFounded = imageRepository.findByHotelId(h.getId());
-//            List<Room> rooms = roomRepository.findByHotelId(h.getId());
-//            List<Review> reviews = reviewRepository.findByHotelId(h.getId());
-//            hotelDocumentRepository.save(
-//                    HotelDocument.builder()
-//                            .id(h.getId())
-//                            .name(h.getName())
-//                            .description(h.getDescription())
-//                            .location(h.getLocation())
-//                            .rate(h.getRate())
-//                            .fromCenter(h.getFromCenter())
-//                            .rooms(new HashSet<>(rooms.stream().map(RoomMapper::toRoomDocument).toList()))
-//                            .typeHotel(TypeHotelMapper.toTypeHotelDocument(h.getTypeHotel()))
-//                            .convenients(new HashSet<>(h.getConvenients().stream().map(ConvenientMapper::toConvenientDocument).toList()))
-//                            .reviews(new HashSet<>(reviews.stream().map(ReviewMapper::toReviewDocument).toList()))
-//                            .images(new HashSet<>(imagesFounded.stream().map(ImageMapper::toImageDocument).toList()))
-//                            .managerId(h.getManagerId().getId())
-//                            .build()
-//            );
-//        }
+        for (Hotel h: hotels) {
+            List<Image> imagesFounded = imageRepository.findByHotelId(h.getId());
+            System.out.println(imagesFounded);
+            List<Room> rooms = roomRepository.findByHotelId(h.getId());
+            List<Review> reviews = reviewRepository.findByHotelId(h.getId());
+            hotelDocumentRepository.save(
+                    HotelDocument.builder()
+                            .id(h.getId())
+                            .name(h.getName())
+                            .description(h.getDescription())
+                            .location(h.getLocation())
+                            .rate(h.getRate())
+                            .fromCenter(h.getFromCenter())
+                            .rooms(new HashSet<>(rooms.stream().map(RoomMapper::toRoomDocument).toList()))
+                            .typeHotel(TypeHotelMapper.toTypeHotelDocument(h.getTypeHotel()))
+                            .convenients(new HashSet<>(h.getConvenients().stream().map(ConvenientMapper::toConvenientDocument).toList()))
+                            .reviews(new HashSet<>(reviews.stream().map(ReviewMapper::toReviewDocument).toList()))
+                            .images(new HashSet<>(imagesFounded.stream().map(ImageMapper::toImageDocument).toList()))
+                            .managerId(h.getManagerId().getId())
+                            .build()
+            );
+        }
 
         List<HotelGetAllResponse> hotelResponses = hotels.stream().map(HotelMapper::toHotelGetAllResponse).toList();
         for(HotelGetAllResponse hotelRes: hotelResponses) {
@@ -108,23 +112,43 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public HotelResponse getById(Long id) {
-        System.out.println("id: " + id);
-        Hotel hotelFounded = hotelRepository.findById(id)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.HOTEL_NOT_FOUND));
+//        Hotel hotelFounded = hotelRepository.findById(id)
+//                .orElseThrow(() -> new ApplicationException(ErrorCode.HOTEL_NOT_FOUND));
+//
+//
+//        List<Image> imagesFounded = imageRepository.findByHotelId(hotelFounded.getId());
+//        HotelResponse hotelResponse = HotelMapper.toHotelResponse(hotelFounded);
+//
+//        hotelResponse.setImagesResponse(new HashSet<>(
+//                imagesFounded.stream().map(ImageMapper::toImageResponse).toList()
+//        ));
+//
+//        hotelResponse.setConvenientsResponse(new HashSet<>(
+//                hotelFounded.getConvenients().stream().map(ConvenientMapper::toConvenientResponse).toList()
+//        ));
 
+        var hotelFounded = hotelDocumentRepository.findById(id);
+        HotelDocument hotel = hotelFounded.get();
 
-        List<Image> imagesFounded = imageRepository.findByHotelId(hotelFounded.getId());
-        HotelResponse hotelResponse = HotelMapper.toHotelResponse(hotelFounded);
+        Set<ReviewDocument> reviews = reviewDocumentRepository.findByHotelId(hotel.getId());
 
-        hotelResponse.setImagesResponse(new HashSet<>(
-                imagesFounded.stream().map(ImageMapper::toImageResponse).toList()
-        ));
+        HotelResponse hotelResponse = HotelMapper.toHotelResponseFromDocument(hotelFounded.get());
 
-        hotelResponse.setConvenientsResponse(new HashSet<>(
-                hotelFounded.getConvenients().stream().map(ConvenientMapper::toConvenientResponse).toList()
-        ));
+        Set<ReviewResponse> reviewResponses = new HashSet<>();
 
-        return  hotelResponse;
+        for (Iterator<ReviewDocument> it = reviews.iterator(); it.hasNext(); ) {
+            ReviewDocument review = it.next();
+            User user = userRepository.findById(review.getUserId())
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+            ReviewResponse reviewResponse = ReviewMapper.toReviewResponse(review);
+//            reviewResponse.setHotelId(hotel.getId());
+            reviewResponse.setUser(UserMapper.toUserReviewResponse(user));
+            reviewResponses.add(reviewResponse);
+        }
+
+        hotelResponse.setReviews(reviewResponses);
+
+        return hotelResponse;
     }
 
 

@@ -1,5 +1,6 @@
 package com.hiumx.bookingbackend.mapper;
 
+import com.hiumx.bookingbackend.document.HotelDocument;
 import com.hiumx.bookingbackend.dto.request.HotelRequest;
 import com.hiumx.bookingbackend.dto.response.HotelGetAllResponse;
 import com.hiumx.bookingbackend.dto.response.HotelResponse;
@@ -20,15 +21,33 @@ public class HotelMapper {
                 .build();
     }
 
+
     public static HotelResponse toHotelResponse(Hotel hotel) {
         return HotelResponse.builder()
                 .id(hotel.getId())
                 .name(hotel.getName())
                 .description(hotel.getDescription())
                 .location(hotel.getLocation())
-                .typeHotelResponse(TypeHotelMapper.toTypeHotelResponse(hotel.getTypeHotel()))
+                .typeHotel(TypeHotelMapper.toTypeHotelResponse(hotel.getTypeHotel()))
                 .rate(hotel.getRate())
                 .manager(UserMapper.toUserResponse(hotel.getManagerId()))
+                .build();
+    }
+
+    public static HotelResponse toHotelResponseFromDocument(HotelDocument hotel) {
+        return HotelResponse.builder()
+                .id(hotel.getId())
+                .name(hotel.getName())
+                .description(hotel.getDescription())
+                .location(hotel.getLocation())
+                .typeHotel(TypeHotelMapper.toTypeHotelResponseFromDocument(hotel.getTypeHotel()))
+                .convenients(
+                        hotel.getConvenients().stream().map(ConvenientMapper::toConvenientResponseFromDocument).collect(Collectors.toSet())
+                )
+                .images(hotel.getImages().stream().map(ImageMapper::toImageResponseFromDocument).collect(Collectors.toSet()))
+                .rooms(hotel.getRooms().stream().map(RoomMapper::toRoomCreationResponseFromDocument).collect(Collectors.toSet()))
+//                .reviews(hotel.getReviews().stream().map(ReviewMapper::toReviewResponse).collect(Collectors.toSet()))
+                .rate(hotel.getRate())
                 .build();
     }
 

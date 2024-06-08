@@ -37,7 +37,9 @@ public class ImageServiceImpl implements ImageService {
                     .url(url)
                     .hotel(hotelFounded)
                     .build();
-            listImagesRes.add(ImageMapper.toImageResponse(imageRepository.save(image)));
+            Image imageSaved = imageRepository.save(image);
+            imageDocumentRepository.save(ImageMapper.toImageDocument(imageSaved));
+            listImagesRes.add(ImageMapper.toImageResponse(imageSaved));
         }
         return listImagesRes;
     }

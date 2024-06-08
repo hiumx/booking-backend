@@ -25,6 +25,15 @@ public class ReviewMapper {
                 .build();
     }
 
+    public static ReviewResponse toReviewResponse(ReviewDocument review) {
+        return ReviewResponse.builder()
+                .id(review.getId())
+                .title(review.getTitle())
+                .content(review.getContent())
+                .point(review.getPoint())
+                .build();
+    }
+
     public static ReviewGetAllHotelResponse toReviewGetAllHotelResponse(Review review) {
         return ReviewGetAllHotelResponse.builder()
                 .point(review.getPoint())
@@ -37,6 +46,7 @@ public class ReviewMapper {
                 .title(review.getTitle())
                 .content(review.getContent())
                 .userId(review.getUser().getId())
+                .hotelId(review.getHotel().getId())
                 .point(review.getPoint())
                 .build();
     }

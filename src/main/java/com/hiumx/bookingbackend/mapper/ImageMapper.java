@@ -15,10 +15,18 @@ public class ImageMapper {
                 .build();
     }
 
+    public static ImageResponse toImageResponseFromDocument(ImageDocument image) {
+        return ImageResponse.builder()
+                .id(image.getId())
+                .url(image.getUrl())
+                .build();
+    }
+
     public static ImageDocument toImageDocument(Image image) {
         return ImageDocument.builder()
                 .id(image.getId())
                 .url(image.getUrl())
+                .hotelId(image.getHotel().getId())
                 .build();
     }
 }
