@@ -12,6 +12,13 @@ public class ConvenientMapper {
                 .build();
     }
 
+    public static ConvenientResponse toConvenientResponseFromDocument(ConvenientDocument convenient) {
+        return ConvenientResponse.builder()
+                .id(convenient.getId())
+                .name(convenient.getName())
+                .build();
+    }
+
     public static ConvenientDocument toConvenientDocument(Convenient convenient) {
         return ConvenientDocument.builder()
                 .id(convenient.getId())

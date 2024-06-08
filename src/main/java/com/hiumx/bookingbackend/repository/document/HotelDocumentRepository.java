@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface HotelDocumentRepository extends ElasticsearchRepository<HotelDocument, Long> {
     List<HotelDocument> findByLocation(String location);
+//    HotelDocument findById(String id);
 }

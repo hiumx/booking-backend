@@ -2,6 +2,7 @@ package com.hiumx.bookingbackend.service.impl;
 
 import com.hiumx.bookingbackend.document.HotelDocument;
 import com.hiumx.bookingbackend.document.RoomDocument;
+import com.hiumx.bookingbackend.dto.request.SearchFilterRequest;
 import com.hiumx.bookingbackend.dto.request.SearchRequest;
 import com.hiumx.bookingbackend.dto.response.HotelSearchAllResponse;
 import com.hiumx.bookingbackend.dto.response.ImageResponse;
@@ -18,6 +19,7 @@ import com.hiumx.bookingbackend.repository.ImageRepository;
 import com.hiumx.bookingbackend.repository.ReviewRepository;
 import com.hiumx.bookingbackend.repository.RoomRepository;
 import com.hiumx.bookingbackend.repository.document.BookingCustomRepository;
+import com.hiumx.bookingbackend.repository.document.HotelCustomRepository;
 import com.hiumx.bookingbackend.repository.document.HotelDocumentRepository;
 import com.hiumx.bookingbackend.repository.document.RoomDocumentRepository;
 import com.hiumx.bookingbackend.service.SearchService;
@@ -25,10 +27,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -41,6 +40,7 @@ public class SearchServiceImpl implements SearchService {
     private RoomRepository roomRepository;
     private ReviewRepository reviewRepository;
     private ImageRepository imageRepository;
+    private HotelCustomRepository hotelCustomRepository;
 
     @Override
     public List<HotelSearchAllResponse> search(SearchRequest request) {
@@ -48,11 +48,51 @@ public class SearchServiceImpl implements SearchService {
         return getSearchHotel(getHotelRoomSearch(hotelDocuments, request.getStartDate(), request.getEndDate()));
     }
 
+    @Override
+    public List<HotelSearchAllResponse> filterByCheckbox(SearchFilterRequest request) {
+        if(request.getChecksType().isEmpty() && request.getChecksConvenient().isEmpty()) {
+            return search(
+                    SearchRequest.builder()
+                            .startDate(request.getStartDate())
+                            .endDate(request.getEndDate())
+                            .location(request.getLocation())
+                            .options(request.getOptions())
+                            .build()
+            );
+        }
+
+        Set<HotelDocument> result = new HashSet<>();
+
+        if(request.getChecksConvenient().isEmpty()) {
+            request.getChecksType().forEach(c -> {
+                List<HotelDocument> hotelDocuments = hotelCustomRepository.findByTypeHotelId(c, request.getLocation());
+                result.addAll(hotelDocuments);
+            });
+        } else if(request.getChecksType().isEmpty()) {
+            request.getChecksConvenient().forEach(c -> {
+                List<HotelDocument> hotelDocuments = hotelCustomRepository.findByConvenient(c, request.getLocation());
+                result.addAll(hotelDocuments);
+            });
+        } else {
+            for (int i = 0; i < request.getChecksType().size(); i++) {
+                for (int j = 0; j < request.getChecksConvenient().size(); j++) {
+                    List<HotelDocument> hotelDocuments = hotelCustomRepository.findByTypeHotelAndConvenient(
+                            request.getChecksType().get(i), request.getChecksConvenient().get(j), request.getLocation()
+                    );
+                    result.addAll(hotelDocuments);
+                }
+            }
+        }
+
+        return getSearchHotel((getHotelRoomSearch(result.stream().toList(), request.getStartDate(), request.getEndDate())));
+    }
+
     private Map<Long, Long> getHotelRoomSearch(List<HotelDocument> hotelDocuments, LocalDate startDate, LocalDate endDate) {
         Map<Long, Long> map = new HashMap<>();
 
         for(HotelDocument h: hotelDocuments) {
             List<RoomDocument> roomDocuments = roomDocumentRepository.findByHotelId(h.getId());
+            System.out.println(roomDocuments);
             for (RoomDocument r : roomDocuments) {
                 map.put(r.getId(), h.getId());
             }
@@ -80,6 +120,7 @@ public class SearchServiceImpl implements SearchService {
     private List<HotelSearchAllResponse> getHotelsResultByIds(List<Long> hotelsId) {
         List<Hotel> hotels = hotelRepository.findAllById(hotelsId);
         List<HotelSearchAllResponse> res = hotels.stream().map(HotelMapper::toHotelSearchAllResponse).toList();
+
         for (int i = 0; i < hotels.size(); i++) {
             RoomCreationResponse room =
                     RoomMapper.toRoomCreationResponse(roomRepository.findByHotelId(hotels.get(i).getId()).getFirst());

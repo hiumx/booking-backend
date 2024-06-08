@@ -19,9 +19,10 @@ public class HotelResponse {
     private String description;
     private String location;
     private Float rate;
-    private TypeHotelResponse typeHotelResponse;
-    private Set<ConvenientResponse> convenientsResponse;
-    private Set<ImageResponse> imagesResponse;
-    private Set<RoomCreationResponse> roomResponses;
+    private TypeHotelResponse typeHotel;
+    private Set<ConvenientResponse> convenients;
+    private Set<ImageResponse> images;
+    private Set<RoomCreationResponse> rooms;
+    private Set<ReviewResponse> reviews;
     private UserCreationResponse manager;
 }

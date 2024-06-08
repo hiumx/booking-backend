@@ -1,6 +1,7 @@
 package com.hiumx.bookingbackend.repository.document;
 
 import com.hiumx.bookingbackend.document.BookingDocument;
+import com.hiumx.bookingbackend.document.HotelDocument;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public class BookingCustomRepository {
@@ -30,4 +32,5 @@ public class BookingCustomRepository {
         SearchHits<BookingDocument> searchHits = elasticsearchRestTemplate.search(searchQuery, BookingDocument.class);
         return searchHits.hasSearchHits();
     }
+
 }

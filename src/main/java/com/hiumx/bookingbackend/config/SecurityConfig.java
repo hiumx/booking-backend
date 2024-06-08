@@ -29,13 +29,14 @@ public class SecurityConfig {
     private final String[] PUBLIC_POST_ENDPOINTS
             = {
                 "/api/v1/users", "/api/v1/auth/sign-in", "/api/v1/auth/logout",
-                "/api/v1/auth/introspect", "/api/v1/emails/send-mail", "/api/v1/search"
+                "/api/v1/auth/introspect", "/api/v1/emails/send-mail", "/api/v1/search",
+                "/api/v1/search/filter"
             };
 
     private final String[] PUBLIC_GET_ENDPOINTS
             = {
                 "/api/v1/type-hotel", "/api/v1/convenients", "/api/v1/hotels",
-                "/api/v1/hotels/search-result"
+                "/api/v1/hotels/search-result", "/api/v1/hotels/{id}", "/api/v1/reviews"
             };
 
     @Autowired

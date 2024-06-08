@@ -14,7 +14,12 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -77,5 +82,17 @@ public class S3ServiceImpl implements S3Service {
         return urls;
 
     }
+
+//    @Override
+//    public String uploadFile(String fileName, BufferedImage image) throws IOException {
+//        ByteArrayOutputStream os = new ByteArrayOutputStream();
+//        ImageIO.write(image, "png", os);
+//        InputStream is = new ByteArrayInputStream(os.toByteArray());
+//
+//        s3Client.putObject(new PutObjectRequest(bucketName, fileName, is, null)
+//                .withCannedAcl());
+//
+//        return prefixUrlCloudFront + "/" + fileName;
+//    }
 
 }

@@ -13,7 +13,7 @@ public class ReviewResponse {
     private Long id;
     private String title;
     private String content;
-    private UserCreationResponse user;
+    private UserReviewResponse user;
     private Long hotelId;
     private Float point;
 }

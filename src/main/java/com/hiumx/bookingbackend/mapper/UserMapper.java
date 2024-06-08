@@ -2,6 +2,7 @@ package com.hiumx.bookingbackend.mapper;
 
 import com.hiumx.bookingbackend.dto.request.UserCreationRequest;
 import com.hiumx.bookingbackend.dto.response.UserCreationResponse;
+import com.hiumx.bookingbackend.dto.response.UserReviewResponse;
 import com.hiumx.bookingbackend.entity.Gender;
 import com.hiumx.bookingbackend.entity.Role;
 import com.hiumx.bookingbackend.entity.User;
@@ -38,6 +39,16 @@ public class UserMapper {
                 .image(user.getImage())
                 .roles((new HashSet<>(user.getRoles().stream().map(RoleMapper::toRoleResponse).toList())))
                 .isActive(user.getIsActive())
+                .build();
+    }
+
+    public static UserReviewResponse toUserReviewResponse(User user) {
+        return UserReviewResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .address(user.getAddress())
+                .image(user.getImage())
                 .build();
     }
 }

@@ -42,10 +42,14 @@ public class ReviewServiceImpl implements ReviewService {
         review.setUser(user);
         review.setHotel(hotel);
 
-        ReviewResponse reviewSaved = ReviewMapper.toReviewResponse(reviewRepository.save(review));
-        reviewSaved.setUser(UserMapper.toUserResponse(user));
+        Review reviewSaved = reviewRepository.save(review);
 
-        return reviewSaved;
+        reviewDocumentRepository.save(ReviewMapper.toReviewDocument(reviewSaved));
+
+        ReviewResponse res = ReviewMapper.toReviewResponse(reviewSaved);
+        res.setUser(UserMapper.toUserReviewResponse(user));
+
+        return res;
     }
 
     @Override

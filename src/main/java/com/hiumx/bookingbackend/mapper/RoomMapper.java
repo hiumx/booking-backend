@@ -38,6 +38,15 @@ public class RoomMapper {
                 .build();
     }
 
+    public static RoomCreationResponse toRoomCreationResponseFromDocument(RoomDocument room) {
+        return RoomCreationResponse.builder()
+                .id(room.getId())
+                .name(room.getName())
+                .numberBed(room.getNumberBed())
+                .price(room.getPrice())
+                .build();
+    }
+
     public static RoomGetResponse toRoomGetResponse(Room room) {
         return RoomGetResponse.builder()
                 .id(room.getId())
