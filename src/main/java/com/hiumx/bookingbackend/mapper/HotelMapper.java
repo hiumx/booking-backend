@@ -73,4 +73,17 @@ public class HotelMapper {
                 .fromCenter(hotel.getFromCenter())
                 .build();
     }
+
+    public static HotelSearchAllResponse toHotelSearchAllResponse(HotelDocument hotel) {
+        return HotelSearchAllResponse.builder()
+                .id(hotel.getId())
+                .name(hotel.getName())
+                .location(hotel.getLocation())
+                .rate(hotel.getRate())
+                .typeHotel(TypeHotelMapper.toTypeHotelResponseFromDocument(hotel.getTypeHotel()))
+                .image(ImageMapper.toImageResponseFromDocument(hotel.getImages().stream().toList().getFirst()))
+                .reviews(hotel.getReviews().stream().map(ReviewMapper::toReviewGetAllHotelResponse).toList())
+                .fromCenter(hotel.getFromCenter())
+                .build();
+    }
 }

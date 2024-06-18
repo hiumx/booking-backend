@@ -3,11 +3,15 @@ package com.hiumx.bookingbackend.repository.document;
 import com.hiumx.bookingbackend.document.BookingDocument;
 import com.hiumx.bookingbackend.document.HotelDocument;
 import org.apache.lucene.search.join.ScoreMode;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.NestedQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.*;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.client.erhlc.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQuery;
 import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
@@ -70,6 +74,71 @@ public class HotelCustomRepository {
                 .build();
 
         return elasticsearchRestTemplate.search(query, HotelDocument.class)
+                .stream().map(SearchHit::getContent)
+                .toList();
+    }
+
+    public List<HotelDocument> findByTypeHotelConvenientPrice(
+            Long typeHotel, Long convenientId, String location, Long lowestPrice, Long highestPrice
+    ) {
+        RangeQueryBuilder rangeQuery = QueryBuilders.rangeQuery("rooms.price")
+                .gte(lowestPrice)
+                .lte(highestPrice);
+
+        BoolQueryBuilder roomBoolQuery = QueryBuilders.boolQuery()
+                .must(rangeQuery);
+
+        NestedQueryBuilder nestedQuery = QueryBuilders.nestedQuery("rooms", roomBoolQuery, ScoreMode.Avg);
+
+        MatchQueryBuilder locationQuery = QueryBuilders.matchQuery("location", location);
+        MatchQueryBuilder typeHotelQuery = QueryBuilders.matchQuery("typeHotel.id", typeHotel);
+
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .must(nestedQuery)
+                .must(locationQuery)
+                .must(typeHotelQuery);
+
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery)
+                .build();
+
+        return elasticsearchRestTemplate.search(searchQuery, HotelDocument.class)
+                .stream().map(SearchHit::getContent)
+                .toList();
+    }
+
+    public List<HotelDocument> getTop10HighestRating() {
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.matchAllQuery())
+                .withSort(Sort.by(Sort.Order.desc("rate")))
+                .withPageable(PageRequest.of(0, 10))
+                .build();
+
+        return elasticsearchRestTemplate.search(searchQuery, HotelDocument.class)
+                .stream().map(SearchHit::getContent)
+                .toList();
+    }
+
+    public List<HotelDocument> searchHotelMatchLocationOrName(String searchTerm) {
+        MultiMatchQueryBuilder multiMatchQuery = QueryBuilders.multiMatchQuery(searchTerm, "name", "location").operator(Operator.AND);
+
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(multiMatchQuery)
+                .withPageable(PageRequest.of(0, 10)) // Pagination
+                .withSort(SortBuilders.scoreSort().order(SortOrder.DESC)) // Sorting by score
+                .build();
+
+        return elasticsearchRestTemplate.search(searchQuery, HotelDocument.class)
+                .stream().map(SearchHit::getContent)
+                .toList();
+    }
+
+    public List<HotelDocument> searchByLocation(String location) {
+        Query searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.matchQuery("location", location).operator(Operator.AND))
+                .build();
+
+        return elasticsearchRestTemplate.search(searchQuery, HotelDocument.class)
                 .stream().map(SearchHit::getContent)
                 .toList();
     }

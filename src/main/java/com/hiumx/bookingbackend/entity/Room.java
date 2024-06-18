@@ -18,7 +18,7 @@ public class Room {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "hotel_id", nullable = false, referencedColumnName = "id")
     private Hotel hotel;
 
