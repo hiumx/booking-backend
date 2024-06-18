@@ -16,6 +16,7 @@ public class TypeHotelMapper {
         return TypeHotelResponse.builder()
                 .id(typeHotel.getId())
                 .name(typeHotel.getName())
+                .image(typeHotel.getImage())
                 .build();
     }
 

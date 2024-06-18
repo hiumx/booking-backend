@@ -10,6 +10,7 @@ import com.hiumx.bookingbackend.enums.ErrorCode;
 import com.hiumx.bookingbackend.exception.ApplicationException;
 import com.hiumx.bookingbackend.mapper.*;
 import com.hiumx.bookingbackend.repository.*;
+import com.hiumx.bookingbackend.repository.document.HotelCustomRepository;
 import com.hiumx.bookingbackend.repository.document.HotelDocumentRepository;
 import com.hiumx.bookingbackend.repository.document.ReviewDocumentRepository;
 import com.hiumx.bookingbackend.service.ConvenientService;
@@ -37,6 +38,7 @@ public class HotelServiceImpl implements HotelService {
     private ReviewRepository reviewRepository;
     private HotelDocumentRepository hotelDocumentRepository;
     private ReviewDocumentRepository reviewDocumentRepository;
+    private HotelCustomRepository hotelCustomRepository;
 
     private RoomService roomService;
 
@@ -155,6 +157,13 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public List<HotelDocument> getByLocation(String location) {
         return hotelDocumentRepository.findByLocation(location);
+    }
+
+    @Override
+    public List<HotelSearchAllResponse> getTopHighRating() {
+        List<HotelDocument> results = hotelCustomRepository.getTop10HighestRating();
+        List<HotelSearchAllResponse> finalResults = results.stream().map(HotelMapper::toHotelSearchAllResponse).toList();
+        return finalResults;
     }
 
 }

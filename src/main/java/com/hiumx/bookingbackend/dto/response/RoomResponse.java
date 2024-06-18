@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class RoomResponse {
     private Long id;
     private String name;
-    private Hotel hotel;
+    private HotelResponse hotel;
     private Integer numberBed;
     private Long price;
 }

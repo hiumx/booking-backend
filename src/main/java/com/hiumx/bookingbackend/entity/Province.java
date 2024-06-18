@@ -1,30 +1,28 @@
 package com.hiumx.bookingbackend.entity;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import jakarta.persistence.*;
-import java.util.Set;
-
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "type_hotels")
+@Table(name = "provinces")
 @Builder
-public class TypeHotel {
+@Data
+public class Province {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "province_name", nullable = false)
+    private String provinceName;
+
     @Column(nullable = false)
-    private String name;
+    private String country;
 
     @Column(nullable = false)
     private String image;
-
-    @OneToMany(mappedBy = "typeHotel", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Hotel> hotels;
 }

@@ -10,6 +10,8 @@ import com.hiumx.bookingbackend.dto.response.ReviewGetAllHotelResponse;
 import com.hiumx.bookingbackend.dto.response.RoomCreationResponse;
 import com.hiumx.bookingbackend.entity.Hotel;
 import com.hiumx.bookingbackend.entity.Image;
+import com.hiumx.bookingbackend.enums.ErrorCode;
+import com.hiumx.bookingbackend.exception.ApplicationException;
 import com.hiumx.bookingbackend.mapper.HotelMapper;
 import com.hiumx.bookingbackend.mapper.ImageMapper;
 import com.hiumx.bookingbackend.mapper.ReviewMapper;
@@ -44,61 +46,82 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public List<HotelSearchAllResponse> search(SearchRequest request) {
-        List<HotelDocument> hotelDocuments = hotelDocumentRepository.findByLocation(request.getLocation());
+        String searchString = request.getLocation().isEmpty() ? request.getName() : request.getLocation();
+        List<HotelDocument> hotelDocuments = hotelCustomRepository.searchHotelMatchLocationOrName(searchString);
+        System.out.println(hotelDocuments);
         return getSearchHotel(getHotelRoomSearch(hotelDocuments, request.getStartDate(), request.getEndDate()));
     }
 
     @Override
     public List<HotelSearchAllResponse> filterByCheckbox(SearchFilterRequest request) {
-        if(request.getChecksType().isEmpty() && request.getChecksConvenient().isEmpty()) {
+        Set<HotelDocument> result = new HashSet<>();
+
+        String searchTerm = request.getLocation().isEmpty() ? request.getLocation() : request.getName();
+
+        if(request.getChecksType().isEmpty() && request.getChecksConvenient().isEmpty()
+            && request.getLowestPrice() == 0 && request.getHighestPrice() == 1000
+        ) {
             return search(
                     SearchRequest.builder()
                             .startDate(request.getStartDate())
+                            .name(request.getName())
                             .endDate(request.getEndDate())
                             .location(request.getLocation())
                             .options(request.getOptions())
                             .build()
             );
-        }
-
-        Set<HotelDocument> result = new HashSet<>();
-
-        if(request.getChecksConvenient().isEmpty()) {
+        } else if(
+                request.getChecksConvenient().isEmpty() && request.getLowestPrice() == 0
+                && request.getHighestPrice() == 1000) {
             request.getChecksType().forEach(c -> {
-                List<HotelDocument> hotelDocuments = hotelCustomRepository.findByTypeHotelId(c, request.getLocation());
+                List<HotelDocument> hotelDocuments = hotelCustomRepository.findByTypeHotelId(c, searchTerm);
                 result.addAll(hotelDocuments);
             });
-        } else if(request.getChecksType().isEmpty()) {
+        } else if(
+                request.getChecksType().isEmpty() && request.getLowestPrice() == 0
+                        && request.getHighestPrice() == 1000
+        ) {
             request.getChecksConvenient().forEach(c -> {
-                List<HotelDocument> hotelDocuments = hotelCustomRepository.findByConvenient(c, request.getLocation());
+                List<HotelDocument> hotelDocuments = hotelCustomRepository.findByConvenient(c, searchTerm);
                 result.addAll(hotelDocuments);
             });
-        } else {
+        } else if(request.getLowestPrice() == 0 && request.getHighestPrice() == 1000) {
             for (int i = 0; i < request.getChecksType().size(); i++) {
                 for (int j = 0; j < request.getChecksConvenient().size(); j++) {
                     List<HotelDocument> hotelDocuments = hotelCustomRepository.findByTypeHotelAndConvenient(
-                            request.getChecksType().get(i), request.getChecksConvenient().get(j), request.getLocation()
+                            request.getChecksType().get(i), request.getChecksConvenient().get(j), searchTerm
+                    );
+                    result.addAll(hotelDocuments);
+                }
+            }
+        } else {
+            for (int i = 0; i < request.getChecksType().size(); i++) {
+                for (int j = 0; j < request.getChecksConvenient().size(); j++) {
+                    List<HotelDocument> hotelDocuments = hotelCustomRepository.findByTypeHotelConvenientPrice(
+                            request.getChecksType().get(i), request.getChecksConvenient().get(j), searchTerm,
+                            request.getLowestPrice(), request.getHighestPrice()
                     );
                     result.addAll(hotelDocuments);
                 }
             }
         }
 
+
+
         return getSearchHotel((getHotelRoomSearch(result.stream().toList(), request.getStartDate(), request.getEndDate())));
     }
 
     private Map<Long, Long> getHotelRoomSearch(List<HotelDocument> hotelDocuments, LocalDate startDate, LocalDate endDate) {
-        Map<Long, Long> map = new HashMap<>();
+        Map<Long, Long> map = new LinkedHashMap<>();
 
         for(HotelDocument h: hotelDocuments) {
             List<RoomDocument> roomDocuments = roomDocumentRepository.findByHotelId(h.getId());
-            System.out.println(roomDocuments);
             for (RoomDocument r : roomDocuments) {
                 map.put(r.getId(), h.getId());
             }
         }
 
-        Map<Long, Long> resultMap = new HashMap<>();
+        Map<Long, Long> resultMap = new LinkedHashMap<>();
         for (Long key : map.keySet()) {
             Long value = map.get(key);
             if(!bookingCustomRepository.isBookingDateRangeOverlap(key, startDate, endDate)) {
@@ -110,15 +133,21 @@ public class SearchServiceImpl implements SearchService {
     }
 
     private List<HotelSearchAllResponse> getSearchHotel(Map<Long, Long> resultSearch) {
-        List<Long> hotelsId = new ArrayList<>();
+        Set<Long> hotelsId = new LinkedHashSet<>();
         for (Long key: resultSearch.keySet()) {
             hotelsId.add(resultSearch.get(key));
         }
         return getHotelsResultByIds(hotelsId);
     }
 
-    private List<HotelSearchAllResponse> getHotelsResultByIds(List<Long> hotelsId) {
-        List<Hotel> hotels = hotelRepository.findAllById(hotelsId);
+    private List<HotelSearchAllResponse> getHotelsResultByIds(Set<Long> hotelsId) {
+        List<Long> hotelId = hotelsId.stream().toList();
+        List<Hotel> hotels = new ArrayList<>();
+        hotelId.forEach(id -> {
+            Hotel hotelFounded = hotelRepository.findById(id)
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.HOTEL_NOT_FOUND));
+            hotels.add(hotelFounded);
+        });
         List<HotelSearchAllResponse> res = hotels.stream().map(HotelMapper::toHotelSearchAllResponse).toList();
 
         for (int i = 0; i < hotels.size(); i++) {

@@ -14,10 +14,14 @@ import java.util.List;
 @Builder
 @Data
 public class SearchFilterRequest {
+    private String name;
     private String location;
     private LocalDate startDate;
     private LocalDate endDate;
     private OptionSearchRequest options;
     private List<Long> checksType;
     private List<Long> checksConvenient;
+    private Long lowestPrice = 0L;
+    private Long highestPrice = 1000L;
+    private List<Long> checksRating;
 }

@@ -63,6 +63,16 @@ public class HotelController {
                 .build();
     }
 
+    @GetMapping("/top-hotels")
+    public ApiResponse<?> getTopHotels() {
+        List<HotelSearchAllResponse> res = hotelService.getTopHighRating();
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Get top hotels successfully")
+                .metadata(res)
+                .build();
+    }
+
 //    @GetMapping("/search-result")
 //    public ApiResponse<?> getSearchResult() {
 //        List<HotelSearchAllResponse> res = hotelService.getSearchHotel();

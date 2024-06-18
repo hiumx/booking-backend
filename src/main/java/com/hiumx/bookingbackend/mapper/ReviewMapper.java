@@ -40,6 +40,12 @@ public class ReviewMapper {
                 .build();
     }
 
+    public static ReviewGetAllHotelResponse toReviewGetAllHotelResponse(ReviewDocument review) {
+        return ReviewGetAllHotelResponse.builder()
+                .point(review.getPoint())
+                .build();
+    }
+
     public static ReviewDocument toReviewDocument(Review review) {
         return ReviewDocument.builder()
                 .id(review.getId())

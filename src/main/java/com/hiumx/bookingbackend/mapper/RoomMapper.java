@@ -23,7 +23,16 @@ public class RoomMapper {
         return RoomResponse.builder()
                 .id(room.getId())
                 .name(room.getName())
-                .hotel(room.getHotel())
+                .hotel(HotelMapper.toHotelResponse(room.getHotel()))
+                .numberBed(room.getNumberBed())
+                .price(room.getPrice())
+                .build();
+    }
+
+    public static RoomResponse toRoomResponse(RoomDocument room) {
+        return RoomResponse.builder()
+                .id(room.getId())
+                .name(room.getName())
                 .numberBed(room.getNumberBed())
                 .price(room.getPrice())
                 .build();
