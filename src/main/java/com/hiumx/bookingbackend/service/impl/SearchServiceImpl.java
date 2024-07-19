@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -48,8 +49,7 @@ public class SearchServiceImpl implements SearchService {
     public List<HotelSearchAllResponse> search(SearchRequest request) {
         String searchString = request.getLocation().isEmpty() ? request.getName() : request.getLocation();
         List<HotelDocument> hotelDocuments = hotelCustomRepository.searchHotelMatchLocationOrName(searchString);
-        System.out.println(hotelDocuments);
-        return getSearchHotel(getHotelRoomSearch(hotelDocuments, request.getStartDate(), request.getEndDate()));
+        return getSearchHotel(getHotelRoomSearch(hotelDocuments, request.getStartDate(), request.getEndDate(), request.getNumberOfRoom()));
     }
 
     @Override
@@ -108,10 +108,10 @@ public class SearchServiceImpl implements SearchService {
 
 
 
-        return getSearchHotel((getHotelRoomSearch(result.stream().toList(), request.getStartDate(), request.getEndDate())));
+        return getSearchHotel((getHotelRoomSearch(result.stream().toList(), request.getStartDate(), request.getEndDate(),  request.getOptions().getNumberOfRoom())));
     }
 
-    private Map<Long, Long> getHotelRoomSearch(List<HotelDocument> hotelDocuments, LocalDate startDate, LocalDate endDate) {
+    public Map<Long, Long> getHotelRoomSearch(List<HotelDocument> hotelDocuments, LocalDate startDate, LocalDate endDate, int numberOfRoom) {
         Map<Long, Long> map = new LinkedHashMap<>();
 
         for(HotelDocument h: hotelDocuments) {
@@ -121,6 +121,8 @@ public class SearchServiceImpl implements SearchService {
             }
         }
 
+        System.out.println("1"+ map);
+
         Map<Long, Long> resultMap = new LinkedHashMap<>();
         for (Long key : map.keySet()) {
             Long value = map.get(key);
@@ -129,18 +131,52 @@ public class SearchServiceImpl implements SearchService {
             }
         }
 
+        System.out.println("2" + resultMap);
+
+
+        Map<Long, Long> finalResultMap = new LinkedHashMap<>();
+        int count = 1;
+        Long preValue = 0L;
+        Long preKey = 0L;
+        for (Long key : resultMap.keySet()) {
+            Long value = resultMap.get(key);
+           if(value != preValue) {
+               if(count < numberOfRoom) {
+//                   resultMap.remove(preKey);
+               }
+               preValue = value;
+               preKey = key;
+           } else {
+               count++;
+           }
+        }
+
+        System.out.println(resultMap);
+
         return resultMap;
     }
 
     private List<HotelSearchAllResponse> getSearchHotel(Map<Long, Long> resultSearch) {
         Set<Long> hotelsId = new LinkedHashSet<>();
+//        if(numberOfRoom > resultSearch.size()) {
+//            throw new ApplicationException(ErrorCode.ROOMS_AVAILABLE_NOT_ENOUGH);
+//        }
+
         for (Long key: resultSearch.keySet()) {
             hotelsId.add(resultSearch.get(key));
         }
-        return getHotelsResultByIds(hotelsId);
+        return getHotelsResultByIds(resultSearch);
     }
 
-    private List<HotelSearchAllResponse> getHotelsResultByIds(Set<Long> hotelsId) {
+    private List<HotelSearchAllResponse> getHotelsResultByIds(Map<Long, Long> resultSearch) {
+        Set<Long> hotelsId = new LinkedHashSet<>();
+        for (Long key: resultSearch.keySet()) {
+            hotelsId.add(resultSearch.get(key));
+        }
+
+        System.out.println("My map: " + resultSearch);
+        System.out.println("Hotel id: " + hotelsId);
+
         List<Long> hotelId = hotelsId.stream().toList();
         List<Hotel> hotels = new ArrayList<>();
         hotelId.forEach(id -> {
@@ -151,14 +187,18 @@ public class SearchServiceImpl implements SearchService {
         List<HotelSearchAllResponse> res = hotels.stream().map(HotelMapper::toHotelSearchAllResponse).toList();
 
         for (int i = 0; i < hotels.size(); i++) {
-            RoomCreationResponse room =
-                    RoomMapper.toRoomCreationResponse(roomRepository.findByHotelId(hotels.get(i).getId()).getFirst());
-            res.get(i).setRoom(room);
+
+            List<Long> roomsId = getKeyByValue(resultSearch, hotels.get(i).getId());
+            List<RoomCreationResponse> rooms = roomRepository.findAllById(roomsId).stream().map(
+                    RoomMapper::toRoomCreationResponse
+            ).toList();
+
+            res.get(i).setRooms(rooms);
 
             List<ReviewGetAllHotelResponse> reviewResponse =
                     reviewRepository.findByHotelId(
-                            hotels.get(i).getId()).stream().map(ReviewMapper::toReviewGetAllHotelResponse
-                    ).toList();
+                            hotels.get(i).getId()
+                    ).stream().map(ReviewMapper::toReviewGetAllHotelResponse).toList();
             res.get(i).setReviews(reviewResponse);
 
             List<Image> images = imageRepository.findByHotelId(hotels.get(i).getId());
@@ -172,6 +212,16 @@ public class SearchServiceImpl implements SearchService {
 
         }
         return res;
+    }
+
+    private List<Long> getKeyByValue(Map<Long, Long> map, Long value) {
+        List<Long> result = new ArrayList<>();
+        for (Map.Entry<Long, Long> entry : map.entrySet()) {
+            if (value.equals(entry.getValue())) {
+                result.add(entry.getKey());
+            }
+        }
+        return result; // return null if value is not found
     }
 
 

@@ -28,6 +28,9 @@ public enum ErrorCode {
     TOKEN_INVALID(1015, "Token invalid!", HttpStatus.UNAUTHORIZED),
     PAYMENT_CARD_NOT_FOUND(1016, "Payment card not found!", HttpStatus.NOT_FOUND),
     ROOM_NOT_FOUND(1017, "Room not found!", HttpStatus.NOT_FOUND),
+    ROOMS_AVAILABLE_NOT_ENOUGH(1018, "Number of rooms available not enough!", HttpStatus.BAD_REQUEST),
+    BOOKING_NOT_FOUND(1019, "Booking not found!", HttpStatus.NOT_FOUND),
+    HISTORY_SEARCH_ALREADY_EXIST(1020, "History search already exist!", HttpStatus.BAD_REQUEST),
     ;
 
     private int code;

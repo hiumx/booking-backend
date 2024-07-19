@@ -143,4 +143,15 @@ public class HotelCustomRepository {
                 .toList();
     }
 
+    public List<HotelDocument> getByManagerId(Long managerId) {
+        Query searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.matchQuery("managerId", managerId))
+                .withPageable(PageRequest.of(0, 20))
+                .build();
+
+        return elasticsearchRestTemplate.search(searchQuery, HotelDocument.class)
+                .stream().map(SearchHit::getContent)
+                .toList();
+    }
+
 }

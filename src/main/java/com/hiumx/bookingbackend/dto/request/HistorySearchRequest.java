@@ -1,10 +1,10 @@
 package com.hiumx.bookingbackend.dto.request;
 
+import com.hiumx.bookingbackend.dto.response.HotelResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.time.LocalDate;
 
@@ -12,11 +12,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @Data
-public class SearchRequest {
-    private String location;
-    private String name;
+public class HistorySearchRequest {
+    private Long userId;
+    private Long hotelId;
     private LocalDate startDate;
     private LocalDate endDate;
-    private OptionSearchRequest options;
-    private int numberOfRoom;
+    private int adult;
+    private int children;
+    private int rooms;
 }

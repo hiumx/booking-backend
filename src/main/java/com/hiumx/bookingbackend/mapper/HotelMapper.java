@@ -17,6 +17,7 @@ public class HotelMapper {
                 .name(request.getName())
                 .description(request.getDescription())
                 .location(request.getLocation())
+                .fromCenter(request.getFromCenter())
                 .rate(request.getRate())
                 .build();
     }
@@ -47,6 +48,38 @@ public class HotelMapper {
                 .images(hotel.getImages().stream().map(ImageMapper::toImageResponseFromDocument).collect(Collectors.toSet()))
                 .rooms(hotel.getRooms().stream().map(RoomMapper::toRoomCreationResponseFromDocument).collect(Collectors.toSet()))
 //                .reviews(hotel.getReviews().stream().map(ReviewMapper::toReviewResponse).collect(Collectors.toSet()))
+                .rate(hotel.getRate())
+                .build();
+    }
+
+    public static HotelResponse toHotelSearchResponseFromDocument(HotelDocument hotel) {
+        return HotelResponse.builder()
+                .id(hotel.getId())
+                .name(hotel.getName())
+                .description(hotel.getDescription())
+                .location(hotel.getLocation())
+                .typeHotel(TypeHotelMapper.toTypeHotelResponseFromDocument(hotel.getTypeHotel()))
+                .convenients(
+                        hotel.getConvenients().stream().map(ConvenientMapper::toConvenientResponseFromDocument).collect(Collectors.toSet())
+                )
+                .images(hotel.getImages().stream().map(ImageMapper::toImageResponseFromDocument).collect(Collectors.toSet()))
+//                .rooms(hotel.getRooms().stream().map(RoomMapper::toRoomCreationResponseFromDocument).collect(Collectors.toSet()))
+//                .reviews(hotel.getReviews().stream().map(ReviewMapper::toReviewResponse).collect(Collectors.toSet()))
+                .rate(hotel.getRate())
+                .build();
+    }
+
+    public static HotelResponse toHotelResponseFromDocumentV2(HotelDocument hotel) {
+        return HotelResponse.builder()
+                .id(hotel.getId())
+                .name(hotel.getName())
+                .description(hotel.getDescription())
+                .location(hotel.getLocation())
+                .typeHotel(TypeHotelMapper.toTypeHotelResponseFromDocument(hotel.getTypeHotel()))
+                .convenients(
+                        hotel.getConvenients().stream().map(ConvenientMapper::toConvenientResponseFromDocument).collect(Collectors.toSet())
+                )
+                .rooms(hotel.getRooms().stream().map(RoomMapper::toRoomCreationResponseFromDocument).collect(Collectors.toSet()))
                 .rate(hotel.getRate())
                 .build();
     }

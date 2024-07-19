@@ -8,6 +8,7 @@ import com.hiumx.bookingbackend.repository.UserRepository;
 import com.hiumx.bookingbackend.service.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,43 +22,29 @@ import java.util.Random;
 @AllArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
-    private JavaMailSender mailSender;
-
     private UserRepository userRepository;
 
-//    @Value("${random-password}")
+    private KafkaTemplate<String, String> kafkaTemplate;
+
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final int PASSWORD_LENGTH = 8;
 
-//    @Value("${spring.mail.username}")
     private final String from = "maixuanhieu250123@gmail.com";
 
-//    @Value("${}")
     @Override
     public void sendSimpleEmail(EmailRequest request) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(from);
 
         User userFounded = userRepository.findByEmail(request.getToEmail());
         if(userFounded == null) throw new ApplicationException(ErrorCode.EMAIL_INVALID);
 
         String passwordRaw = generateRandomPassword();
 
-        message.setTo(request.getToEmail());
-        message.setSubject("Reset Password");
-        message.setText("Your reset password: " + passwordRaw);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        userFounded.setPassword(passwordEncoder.encode(passwordRaw));
+ 
+        userRepository.save(userFounded);
 
-        try {
-            mailSender.send(message);
-            System.out.println("Mail Sent Successfully...");
-
-            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-            userFounded.setPassword(passwordEncoder.encode(passwordRaw));
-
-            userRepository.save(userFounded);
-        }catch (RuntimeException error) {
-            throw new RuntimeException(error);
-        }
+        kafkaTemplate.send("forgot-password", "Your reset password: " + passwordRaw + "@@" + request.getToEmail());
 
     }
 

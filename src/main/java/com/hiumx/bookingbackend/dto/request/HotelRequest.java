@@ -17,6 +17,7 @@ public class HotelRequest {
     private Long typeId;
     private String location;
     private Float rate;
+    private Float fromCenter;
     Set<Long> convenientIds;
     Set<RoomRequest> rooms;
     private Long managerId;

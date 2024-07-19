@@ -15,7 +15,10 @@ public interface HotelService {
     HotelResponse create(HotelRequest request);
     List<HotelGetAllResponse> getAll();
     HotelResponse getById(Long id);
-    List<HotelDocument> getByLocation(String location);
+//    HotelResponse getSearchById(Long id);
 
+    List<HotelDocument> getByLocation(String location);
     List<HotelSearchAllResponse> getTopHighRating();
+    List<HotelResponse> getByManagerId(Long managerId);
+
 }

@@ -24,7 +24,7 @@ public class HotelController {
 
     @PostMapping
     public ApiResponse<?> create(@RequestBody HotelRequest request) {
-        System.out.println("Request: " + request);
+
         HotelResponse hotelResponse = hotelService.create(request);
         return ApiResponse.builder()
                 .code(1000)
@@ -53,6 +53,16 @@ public class HotelController {
                 .build();
     }
 
+//    @GetMapping("/search/{id}")
+//    public ApiResponse<?> getSearchById(@PathVariable Long id) {
+//        HotelResponse res = hotelService.getById(id);
+//        return ApiResponse.builder()
+//                .code(1000)
+//                .message("Get hotel by id successfully")
+//                .metadata(res)
+//                .build();
+//    }
+
     @GetMapping("/find-by-location")
     public ApiResponse<?> getByLocation(@RequestParam("location") String location) {
         List<HotelDocument> res = hotelService.getByLocation(location);
@@ -69,6 +79,18 @@ public class HotelController {
         return ApiResponse.builder()
                 .code(1000)
                 .message("Get top hotels successfully")
+                .metadata(res)
+                .build();
+    }
+
+    @GetMapping("/hotel-manager")
+    public ApiResponse<?> getByHotelManager(@RequestParam(name = "id") Long managerId) {
+        System.out.println(managerId);
+
+        List<HotelResponse> res = hotelService.getByManagerId(managerId);
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Get hotels by manager id successfully")
                 .metadata(res)
                 .build();
     }
