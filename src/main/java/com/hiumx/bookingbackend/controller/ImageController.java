@@ -22,7 +22,8 @@ public class ImageController {
     private S3Service s3Service;
 
     @PostMapping
-    public ApiResponse<?> upload(@RequestParam MultipartFile[] files,@RequestParam Long hotel_id) {
+    public ApiResponse<?> upload(@RequestParam("files") MultipartFile[] files,@RequestParam Long hotel_id) {
+
         List<String> urls = s3Service.uploadFiles(files);
         ImageRequest imageRequest = ImageRequest.builder()
                 .url(new HashSet<>(urls))

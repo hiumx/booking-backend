@@ -32,4 +32,13 @@ public class HistorySearch {
 
     @Column(name = "end_date")
     private LocalDate endDate;
+
+    @Column(name = "adult")
+    private int adult;
+
+    @Column(name = "children")
+    private int children;
+
+    @Column(name = "rooms")
+    private int rooms;
 }

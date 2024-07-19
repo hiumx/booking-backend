@@ -2,8 +2,11 @@ package com.hiumx.bookingbackend.controller;
 
 import com.hiumx.bookingbackend.dto.request.UserCreationRequest;
 import com.hiumx.bookingbackend.dto.request.UserResetPasswordRequest;
+import com.hiumx.bookingbackend.dto.request.UserSaveRequest;
 import com.hiumx.bookingbackend.dto.response.ApiResponse;
 import com.hiumx.bookingbackend.dto.response.UserCreationResponse;
+import com.hiumx.bookingbackend.dto.response.UserSaveGetResponse;
+import com.hiumx.bookingbackend.dto.response.UserSaveResponse;
 import com.hiumx.bookingbackend.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -88,6 +91,26 @@ public class UserController {
         return ApiResponse.builder()
                 .code(1000)
                 .message("Reset password successfully")
+                .build();
+    }
+
+    @PostMapping("/save-hotel")
+    ApiResponse<?> saveHotel(@RequestBody UserSaveRequest request) {
+        UserSaveResponse userSaveResponse = userService.saveHotel(request);
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Save hotel successfully")
+                .metadata(userSaveResponse)
+                .build();
+    }
+
+    @GetMapping("/save-hotel/{id}")
+    ApiResponse<?> getHotelSaveByUser(@PathVariable("id") Long userId) {
+        UserSaveGetResponse userSaveResponse = userService.getHotelSaveByUser(userId);
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Get hotels saved by user successfully")
+                .metadata(userSaveResponse)
                 .build();
     }
 

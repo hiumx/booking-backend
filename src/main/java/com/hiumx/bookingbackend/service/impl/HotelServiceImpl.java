@@ -13,9 +13,11 @@ import com.hiumx.bookingbackend.repository.*;
 import com.hiumx.bookingbackend.repository.document.HotelCustomRepository;
 import com.hiumx.bookingbackend.repository.document.HotelDocumentRepository;
 import com.hiumx.bookingbackend.repository.document.ReviewDocumentRepository;
+import com.hiumx.bookingbackend.repository.document.RoomDocumentRepository;
 import com.hiumx.bookingbackend.service.ConvenientService;
 import com.hiumx.bookingbackend.service.HotelService;
 import com.hiumx.bookingbackend.service.RoomService;
+import com.hiumx.bookingbackend.service.SearchService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,8 +41,9 @@ public class HotelServiceImpl implements HotelService {
     private HotelDocumentRepository hotelDocumentRepository;
     private ReviewDocumentRepository reviewDocumentRepository;
     private HotelCustomRepository hotelCustomRepository;
+    private RoomDocumentRepository roomDocumentRepository;
 
-    private RoomService roomService;
+    private SearchServiceImpl searchService;
 
     @Override
     public HotelResponse create(HotelRequest request) {
@@ -63,8 +66,27 @@ public class HotelServiceImpl implements HotelService {
         for (RoomRequest r: request.getRooms()) {
             Room room = RoomMapper.toRoom(r);
             room.setHotel(hotelSaved);
-            roomResponses.add(RoomMapper.toRoomCreationResponse(roomRepository.save(room)));
+            Room roomSaved = roomRepository.save(room);
+            roomDocumentRepository.save(RoomMapper.toRoomDocument(roomSaved));
+            roomResponses.add(RoomMapper.toRoomCreationResponse(roomSaved));
         }
+
+
+
+//        hotelDocumentRepository.save(
+//                HotelDocument.builder()
+//                        .id(hotelSaved.getId())
+//                        .name(hotelSaved.getName())
+//                        .description(hotelSaved.getDescription())
+//                        .location(hotelSaved.getLocation())
+//                        .rate(hotelSaved.getRate())
+//                        .fromCenter(hotelSaved.getFromCenter())
+//                        .rooms(new HashSet<>(rooms.stream().map(RoomMapper::toRoomDocument).toList()))
+//                        .typeHotel(TypeHotelMapper.toTypeHotelDocument(hotelSaved.getTypeHotel()))
+//                        .convenients(new HashSet<>(hotelSaved.getConvenients().stream().map(ConvenientMapper::toConvenientDocument).toList()))
+//                        .managerId(hotelSaved.getManagerId().getId())
+//                        .build()
+//        );
 
         HotelResponse hotelResponse = HotelMapper.toHotelResponse(hotelSaved);
         hotelResponse.setTypeHotel(TypeHotelMapper.toTypeHotelResponse(typeHotelFounded));
@@ -153,6 +175,33 @@ public class HotelServiceImpl implements HotelService {
         return hotelResponse;
     }
 
+//    @Override
+//    public HotelResponse getSearchById(Long id) {
+//        HotelDocument hotelFounded = hotelDocumentRepository.findById(id).get();
+//
+//        Set<ReviewDocument> reviews = reviewDocumentRepository.findByHotelId(hotelFounded.getId());
+//
+//        HotelResponse hotelResponse = HotelMapper.toHotelSearchResponseFromDocument(hotelFounded);
+//        searchService.getHotelRoomSearch(List.of(hotelFounded), )
+////        hotelResponse.setRooms();
+//
+//        Set<ReviewResponse> reviewResponses = new HashSet<>();
+//
+//        for (Iterator<ReviewDocument> it = reviews.iterator(); it.hasNext(); ) {
+//            ReviewDocument review = it.next();
+//            User user = userRepository.findById(review.getUserId())
+//                    .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+//            ReviewResponse reviewResponse = ReviewMapper.toReviewResponse(review);
+////            reviewResponse.setHotelId(hotel.getId());
+//            reviewResponse.setUser(UserMapper.toUserReviewResponse(user));
+//            reviewResponses.add(reviewResponse);
+//        }
+//
+//        hotelResponse.setReviews(reviewResponses);
+//
+//        return hotelResponse;
+//    }
+
 
     @Override
     public List<HotelDocument> getByLocation(String location) {
@@ -164,6 +213,14 @@ public class HotelServiceImpl implements HotelService {
         List<HotelDocument> results = hotelCustomRepository.getTop10HighestRating();
         List<HotelSearchAllResponse> finalResults = results.stream().map(HotelMapper::toHotelSearchAllResponse).toList();
         return finalResults;
+    }
+
+    @Override
+    public List<HotelResponse> getByManagerId(Long managerId) {
+        User user = userRepository.findById(managerId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+        List<HotelDocument> hotels = hotelCustomRepository.getByManagerId(managerId);
+        return hotels.stream().map(HotelMapper::toHotelResponseFromDocumentV2).toList();
     }
 
 }

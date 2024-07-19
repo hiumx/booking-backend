@@ -1,16 +1,20 @@
 package com.hiumx.bookingbackend.service.impl;
 
+import com.hiumx.bookingbackend.document.UserSaveDocument;
 import com.hiumx.bookingbackend.dto.request.UserCreationRequest;
 import com.hiumx.bookingbackend.dto.request.UserResetPasswordRequest;
-import com.hiumx.bookingbackend.dto.response.UserCreationResponse;
+import com.hiumx.bookingbackend.dto.request.UserSaveRequest;
+import com.hiumx.bookingbackend.dto.response.*;
 import com.hiumx.bookingbackend.entity.Gender;
+import com.hiumx.bookingbackend.entity.Hotel;
 import com.hiumx.bookingbackend.entity.Role;
 import com.hiumx.bookingbackend.entity.User;
 import com.hiumx.bookingbackend.exception.ApplicationException;
 import com.hiumx.bookingbackend.enums.ErrorCode;
-import com.hiumx.bookingbackend.mapper.UserMapper;
-import com.hiumx.bookingbackend.repository.RoleRepository;
-import com.hiumx.bookingbackend.repository.UserRepository;
+import com.hiumx.bookingbackend.mapper.*;
+import com.hiumx.bookingbackend.repository.*;
+import com.hiumx.bookingbackend.repository.document.HotelDocumentRepository;
+import com.hiumx.bookingbackend.repository.document.UserSaveDocumentRepository;
 import com.hiumx.bookingbackend.service.S3Service;
 import com.hiumx.bookingbackend.service.UserService;
 import com.hiumx.bookingbackend.utils.AvatarGenerator;
@@ -32,7 +36,13 @@ public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
     private RoleRepository roleRepository;
+    private HotelRepository hotelRepository;
+    private UserSaveDocumentRepository userSaveDocumentRepository;
+    private ReviewRepository reviewRepository;
+    private RoomRepository roomRepository;
+    private ImageRepository imageRepository;
     private S3Service s3Service;
+    private final HotelDocumentRepository hotelDocumentRepository;
 
     @Override
     public UserCreationResponse createUser(UserCreationRequest request) {
@@ -178,5 +188,65 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userFounded);
 
         userRepository.save(userFounded);
+    }
+
+    @Override
+    public UserSaveResponse saveHotel(UserSaveRequest request) {
+        Long userId = request.getUserId();
+        Long hotelId = request.getHotelId();
+
+        User userFounded = userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+        Hotel hotelFounded = hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.HOTEL_NOT_FOUND));
+
+        UserSaveDocument userSaveDocument = userSaveDocumentRepository.findByUserId(userId);
+        if(userSaveDocument != null) {
+            if(userSaveDocument.getHotelsId().contains(hotelId)) {
+                userSaveDocument.getHotelsId().remove(hotelId);
+                userFounded.setHotelsSaved(new HashSet<>());
+                userRepository.save(userFounded);
+                userFounded.setHotelsSaved(new HashSet<>(hotelRepository.findAllById(userSaveDocument.getHotelsId())));
+            } else {
+                userFounded.getHotelsSaved().add(hotelFounded);
+                userSaveDocument.getHotelsId().add(hotelId);
+            }
+        } else {
+            Set<Long> hotel = new HashSet<>();
+            hotel.add(hotelId);
+            userSaveDocument = UserSaveDocument.builder().id(userId).userId(userId).hotelsId(hotel).build();
+            userFounded.getHotelsSaved().add(hotelFounded);
+        }
+
+        userRepository.save(userFounded);
+        userSaveDocumentRepository.save(userSaveDocument);
+        return UserSaveResponse.builder().userId(userId).hotelId(hotelId).build();
+    }
+
+    @Override
+    public UserSaveGetResponse getHotelSaveByUser(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        UserSaveDocument userSaveDocument = userSaveDocumentRepository.findByUserId(userId);
+        List<Hotel> hotels = hotelRepository.findAllById(userSaveDocument.getHotelsId());
+        List<HotelSearchAllResponse> hotelResponses = hotels.stream().map(HotelMapper::toHotelSearchAllResponse).toList();
+        hotelResponses.forEach(h -> {
+            List<ReviewGetAllHotelResponse> reviewResponse =
+                    reviewRepository.findByHotelId(
+                            h.getId()
+                    ).stream().map(ReviewMapper::toReviewGetAllHotelResponse).toList();
+            h.setReviews(reviewResponse);
+            List<RoomCreationResponse> rooms = roomRepository.findByHotelId(h.getId()).stream().map(
+                    RoomMapper::toRoomCreationResponse
+            ).toList();
+            ImageResponse imageResponse = ImageMapper.toImageResponse(imageRepository.findByHotelId(h.getId()).getFirst());
+            h.setRooms(rooms);
+            h.setImage(imageResponse);
+        });
+        return UserSaveGetResponse.builder()
+                .userId(userId)
+                .hotelResponses(hotelResponses)
+                .build();
     }
 }

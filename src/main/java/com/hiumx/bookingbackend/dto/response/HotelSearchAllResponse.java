@@ -19,6 +19,6 @@ public class HotelSearchAllResponse {
     private TypeHotelResponse typeHotel;
     private ImageResponse image;
     private List<ReviewGetAllHotelResponse> reviews;
-    private RoomCreationResponse room;
+    private List<RoomCreationResponse> rooms;
     private Float fromCenter;
 }

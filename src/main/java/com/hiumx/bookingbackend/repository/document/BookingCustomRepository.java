@@ -7,6 +7,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.client.erhlc.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.client.erhlc.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -31,6 +32,20 @@ public class BookingCustomRepository {
 
         SearchHits<BookingDocument> searchHits = elasticsearchRestTemplate.search(searchQuery, BookingDocument.class);
         return searchHits.hasSearchHits();
+    }
+
+    public List<BookingDocument> getBookingByUser(Long userId) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchQuery("user_id", userId))
+                .must(QueryBuilders.rangeQuery("start_date").gte(LocalDate.now()));
+
+
+        Query searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery).build();
+
+        return elasticsearchRestTemplate.search(searchQuery, BookingDocument.class)
+                .stream().map(SearchHit::getContent)
+                .toList();
     }
 
 }
