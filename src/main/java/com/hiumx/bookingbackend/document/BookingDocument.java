@@ -26,6 +26,9 @@ public class BookingDocument {
     @Field(type = FieldType.Keyword, name = "user_id")
     private Long userId;
 
+    @Field(type = FieldType.Keyword, name = "hotel_id")
+    private Long hotelId;
+
     @Field(type = FieldType.Keyword, name = "room_id")
     private Set<Long> roomsId;
 

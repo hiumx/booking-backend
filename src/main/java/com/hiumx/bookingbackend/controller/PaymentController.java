@@ -3,14 +3,12 @@ package com.hiumx.bookingbackend.controller;
 import com.hiumx.bookingbackend.dto.response.ApiResponse;
 import com.hiumx.bookingbackend.dto.response.VNPayResponse;
 import com.hiumx.bookingbackend.service.PaymentService;
+import com.hiumx.bookingbackend.service.SocketIOService;
 import com.hiumx.bookingbackend.service.WebhookService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
@@ -22,6 +20,7 @@ public class PaymentController {
     private final PaymentService paymentService;
     private final WebhookService webhookService;
 //    private final RestTemplate restTemplate;
+    private final SocketIOService socketIOService;
 
     @GetMapping("/vn-pay")
     public ApiResponse<?> pay(HttpServletRequest request) {
@@ -45,7 +44,9 @@ public class PaymentController {
 
         if (status.equals("00")) {
             webhookService.handlePaymentResponse(status);
+            socketIOService.sendPaymentResponse("1", "Success");
             return ApiResponse.builder().code(1000).message("Success").metadata(amount).build();
+
 
         } else {
             return ApiResponse.builder().code(1111).message("Failed!").build();

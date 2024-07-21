@@ -89,6 +89,7 @@ public class UserServiceImpl implements UserService {
         var roles = roleRepository.findAllById(rolesId);
         user.setRoles(new HashSet<>(roles));
 
+        System.out.println(user);
         User userSaved = userRepository.save(user);
         return UserMapper.toUserResponse(userSaved);
     }

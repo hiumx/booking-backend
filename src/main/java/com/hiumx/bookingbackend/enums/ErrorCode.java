@@ -31,6 +31,9 @@ public enum ErrorCode {
     ROOMS_AVAILABLE_NOT_ENOUGH(1018, "Number of rooms available not enough!", HttpStatus.BAD_REQUEST),
     BOOKING_NOT_FOUND(1019, "Booking not found!", HttpStatus.NOT_FOUND),
     HISTORY_SEARCH_ALREADY_EXIST(1020, "History search already exist!", HttpStatus.BAD_REQUEST),
+    TYPE_POST_NOT_FOUND(1021, "Type post not found!", HttpStatus.NOT_FOUND),
+    POST_NOT_FOUND(1022, "Post not found!", HttpStatus.NOT_FOUND),
+    POST_NOT_CONFIRMED_YET(1023, "Post not confirmed yet!", HttpStatus.BAD_REQUEST),
     ;
 
     private int code;
