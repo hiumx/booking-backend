@@ -13,7 +13,7 @@ public class WebhookServiceImpl implements WebhookService {
     public void handlePaymentResponse(String paymentStatus) {
         if("00".equals(paymentStatus)) {
             System.out.println("Payment successfully.");
-            sendWebhookToClient(paymentStatus);
+//            sendWebhookToClient(paymentStatus);
         } else {
             System.out.println("Payment failure");
         }

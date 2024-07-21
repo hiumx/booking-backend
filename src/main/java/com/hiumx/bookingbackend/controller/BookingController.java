@@ -3,6 +3,7 @@ package com.hiumx.bookingbackend.controller;
 import com.hiumx.bookingbackend.dto.request.BookingRequest;
 import com.hiumx.bookingbackend.dto.response.ApiResponse;
 import com.hiumx.bookingbackend.dto.response.BookingGetResponse;
+import com.hiumx.bookingbackend.dto.response.BookingGetWithUserResponse;
 import com.hiumx.bookingbackend.dto.response.BookingResponse;
 import com.hiumx.bookingbackend.service.BookingService;
 import lombok.AllArgsConstructor;
@@ -29,11 +30,21 @@ public class BookingController {
     }
 
     @GetMapping("/user/{id}")
-    public ApiResponse<?> create(@PathVariable Long id) {
+    public ApiResponse<?> getBookingByUser(@PathVariable Long id) {
         List<BookingGetResponse> bookingResponse = bookingService.getBookingByUserId(id);
         return ApiResponse.builder()
                 .code(1000)
                 .message("Get booking by user successfully")
+                .metadata(bookingResponse)
+                .build();
+    }
+
+    @GetMapping("/hotel/{id}")
+    public ApiResponse<?> getBookingByHotel(@PathVariable Long id) {
+        List<BookingGetWithUserResponse> bookingResponse = bookingService.getBookingByHotelId(id);
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Get booking by hotel successfully")
                 .metadata(bookingResponse)
                 .build();
     }

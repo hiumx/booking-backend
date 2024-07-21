@@ -3,6 +3,7 @@ package com.hiumx.bookingbackend.mapper;
 import com.hiumx.bookingbackend.document.BookingDocument;
 import com.hiumx.bookingbackend.dto.request.BookingRequest;
 import com.hiumx.bookingbackend.dto.response.BookingGetResponse;
+import com.hiumx.bookingbackend.dto.response.BookingGetWithUserResponse;
 import com.hiumx.bookingbackend.dto.response.BookingResponse;
 import com.hiumx.bookingbackend.entity.Booking;
 import com.hiumx.bookingbackend.entity.Room;
@@ -30,6 +31,7 @@ public class BookingMapper {
                 .userId(booking.getUser().getId())
                 .paymentCardId(booking.getPaymentCard().getId())
                 .roomsId(new HashSet<>(booking.getRoom().stream().map(Room::getId).toList()))
+                .hotelId(booking.getHotel().getId())
                 .build();
     }
 
@@ -43,11 +45,22 @@ public class BookingMapper {
                 .paymentCardId(booking.getPaymentCard().getId())
                 .userId(booking.getUser().getId())
                 .roomsId(new HashSet<>(booking.getRoom().stream().map(Room::getId).toList()))
+                .hotelId(booking.getHotel().getId())
                 .build();
     }
 
     public static BookingGetResponse toBookingResponseFromDocument(BookingDocument booking) {
         return BookingGetResponse.builder()
+                .id(booking.getId())
+                .numberAdult(booking.getNumberAdult())
+                .numberChildren(booking.getNumberChildren())
+                .startDate(booking.getStartDate())
+                .endDate(booking.getEndDate())
+                .build();
+    }
+
+    public static BookingGetWithUserResponse toBookingWithUserResponseFromDocument(BookingDocument booking) {
+        return BookingGetWithUserResponse.builder()
                 .id(booking.getId())
                 .numberAdult(booking.getNumberAdult())
                 .numberChildren(booking.getNumberChildren())

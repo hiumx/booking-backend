@@ -18,6 +18,7 @@ public class BookingResponse {
     private Long userId;
 
     private Set<Long> roomsId;
+    private Long hotelId;
 
     private Integer numberAdult;
 

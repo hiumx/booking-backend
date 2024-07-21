@@ -24,6 +24,10 @@ public class Booking{
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "hotel_id")
+    private Hotel hotel;
+
     @ManyToMany
     private Set<Room> room;
 

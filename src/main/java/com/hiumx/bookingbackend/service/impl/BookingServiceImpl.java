@@ -3,19 +3,15 @@ package com.hiumx.bookingbackend.service.impl;
 import com.hiumx.bookingbackend.document.BookingDocument;
 import com.hiumx.bookingbackend.dto.request.BookingRequest;
 import com.hiumx.bookingbackend.dto.response.BookingGetResponse;
+import com.hiumx.bookingbackend.dto.response.BookingGetWithUserResponse;
 import com.hiumx.bookingbackend.dto.response.BookingResponse;
-import com.hiumx.bookingbackend.entity.Booking;
-import com.hiumx.bookingbackend.entity.PaymentCard;
-import com.hiumx.bookingbackend.entity.Room;
-import com.hiumx.bookingbackend.entity.User;
+import com.hiumx.bookingbackend.entity.*;
 import com.hiumx.bookingbackend.enums.ErrorCode;
 import com.hiumx.bookingbackend.exception.ApplicationException;
 import com.hiumx.bookingbackend.mapper.BookingMapper;
 import com.hiumx.bookingbackend.mapper.RoomMapper;
-import com.hiumx.bookingbackend.repository.BookingRepository;
-import com.hiumx.bookingbackend.repository.PaymentCardRepository;
-import com.hiumx.bookingbackend.repository.RoomRepository;
-import com.hiumx.bookingbackend.repository.UserRepository;
+import com.hiumx.bookingbackend.mapper.UserMapper;
+import com.hiumx.bookingbackend.repository.*;
 import com.hiumx.bookingbackend.repository.document.BookingCustomRepository;
 import com.hiumx.bookingbackend.repository.document.BookingDocumentRepository;
 import com.hiumx.bookingbackend.service.BookingService;
@@ -37,6 +33,7 @@ public class BookingServiceImpl implements BookingService {
     private PaymentCardRepository paymentCardRepository;
     private BookingDocumentRepository bookingDocumentRepository;
     private BookingCustomRepository bookingCustomRepository;
+    private HotelRepository hotelRepository;
 
     private KafkaTemplate<String, String> kafkaTemplate;
 
@@ -47,6 +44,9 @@ public class BookingServiceImpl implements BookingService {
 
         PaymentCard paymentCardFounded = paymentCardRepository.findById(request.getPaymentCardId())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.PAYMENT_CARD_NOT_FOUND));
+
+        Hotel hotel = hotelRepository.findById(request.getHotelId())
+                .orElseThrow(() -> new ApplicationException(ErrorCode.HOTEL_NOT_FOUND));
 
         Set<Room> rooms = new HashSet<>();
         request.getRoomsId().forEach(
@@ -61,6 +61,8 @@ public class BookingServiceImpl implements BookingService {
         booking.setUser(userFounded);
         booking.setPaymentCard(paymentCardFounded);
         booking.setRoom(rooms);
+        booking.setHotel(hotel);
+
 
         Booking bookingSaved = bookingRepository.save(booking);
 
@@ -79,6 +81,23 @@ public class BookingServiceImpl implements BookingService {
         for(int i = 0; i < bookingDocuments.size(); i++) {
             List<Room> rooms = roomRepository.findAllById(bookingDocuments.get(i).getRoomsId());
             res.get(i).setRoomResponses(rooms.stream().map(RoomMapper::toRoomGetResponse).toList());
+        }
+        return res;
+    }
+
+    @Override
+    public List<BookingGetWithUserResponse> getBookingByHotelId(Long id) {
+        List<BookingDocument> bookingDocuments = bookingCustomRepository.getBookingByHotel(id);
+        List<BookingGetWithUserResponse> res = bookingDocuments.stream().map(BookingMapper::toBookingWithUserResponseFromDocument).toList();
+
+
+
+        for(int i = 0; i < bookingDocuments.size(); i++) {
+            List<Room> rooms = roomRepository.findAllById(bookingDocuments.get(i).getRoomsId());
+            res.get(i).setRoomResponses(rooms.stream().map(RoomMapper::toRoomGetResponse).toList());
+            User user = userRepository.findById(bookingDocuments.get(i).getUserId())
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+            res.get(i).setUser(UserMapper.toUserResponse(user));
         }
         return res;
     }
