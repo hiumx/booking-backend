@@ -14,4 +14,5 @@ public class ProvinceResponse {
     private String provinceName;
     private String country;
     private String image;
+    private Long countHotel;
 }

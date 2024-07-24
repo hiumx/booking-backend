@@ -48,6 +48,20 @@ public class BookingCustomRepository {
                 .toList();
     }
 
+    public List<BookingDocument> getBookingByUserHotel(Long userId, Long hotelId) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchQuery("user_id", userId))
+                .must(QueryBuilders.matchQuery("hotel_id", hotelId));
+
+
+        Query searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery).build();
+
+        return elasticsearchRestTemplate.search(searchQuery, BookingDocument.class)
+                .stream().map(SearchHit::getContent)
+                .toList();
+    }
+
     public List<BookingDocument> getBookingByHotel(Long hotelId) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
                 .must(QueryBuilders.matchQuery("hotel_id", hotelId))

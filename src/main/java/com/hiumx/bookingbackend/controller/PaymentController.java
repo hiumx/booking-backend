@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @RequestMapping("/api/v1/payment")
@@ -32,8 +33,10 @@ public class PaymentController {
     }
 
     @GetMapping("/vn-pay-callback")
-    public ApiResponse<?> payCallbackHandler(HttpServletRequest request) {
+    public RedirectView payCallbackHandler(HttpServletRequest request) {
         String status = request.getParameter("vnp_ResponseCode");
+        String date = request.getParameter("vnp_PayDate");
+        String numberRef = request.getParameter("vnp_BankTranNo");
 
         Long amount = 0L;
         try {
@@ -42,14 +45,17 @@ public class PaymentController {
             throw e;
         }
 
+        RedirectView redirectView = new RedirectView();
+
         if (status.equals("00")) {
-            webhookService.handlePaymentResponse(status);
-            socketIOService.sendPaymentResponse("1", "Success");
-            return ApiResponse.builder().code(1000).message("Success").metadata(amount).build();
-
-
+            // Payment successful, redirect to success page
+            redirectView.setUrl("http://localhost:3000/payment/vn-pay-call-back?amount="
+                    + amount + "&date=" + date + "&numberRef=" + numberRef);
         } else {
-            return ApiResponse.builder().code(1111).message("Failed!").build();
+            // Payment failed, redirect to failure page
+            redirectView.setUrl("http://localhost:3000/failure");
         }
+
+        return redirectView;
     }
 }

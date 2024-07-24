@@ -21,7 +21,7 @@ public class SearchFilterRequest {
     private OptionSearchRequest options;
     private List<Long> checksType;
     private List<Long> checksConvenient;
+    private List<Long> checksRating;
     private Long lowestPrice = 0L;
     private Long highestPrice = 1000L;
-    private List<Long> checksRating;
 }

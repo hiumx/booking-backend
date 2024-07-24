@@ -38,7 +38,7 @@ public class SecurityConfig {
                 "/api/v1/type-hotel", "/api/v1/convenients", "/api/v1/hotels",
                 "/api/v1/hotels/search-result", "/api/v1/hotels/{id}", "/api/v1/reviews",
                 "/api/v1/provinces", "/api/v1/rooms/r", "/api/v1/payment/vn-pay", "/api/v1/payment/vn-pay-callback",
-                "/api/v1/posts/**", "/api/v1/posts/confirmed/**"
+                "/api/v1/posts/**", "/api/v1/posts/confirmed/**", "/api/v1/hotels/count-by-province"
             };
 
     @Autowired
