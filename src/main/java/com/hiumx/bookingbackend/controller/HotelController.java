@@ -95,6 +95,16 @@ public class HotelController {
                 .build();
     }
 
+    @GetMapping("/count-by-province")
+    public ApiResponse<?> countHotelByProvince() {
+        List<Object[]> res = hotelService.countHotelsByLocation();
+        return ApiResponse.builder()
+                .code(1000)
+                .message("Count hotels by province successfully")
+                .metadata(res)
+                .build();
+    }
+
 //    @GetMapping("/search-result")
 //    public ApiResponse<?> getSearchResult() {
 //        List<HotelSearchAllResponse> res = hotelService.getSearchHotel();

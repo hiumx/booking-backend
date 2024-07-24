@@ -13,6 +13,9 @@ import com.hiumx.bookingbackend.mapper.UserMapper;
 import com.hiumx.bookingbackend.repository.HotelRepository;
 import com.hiumx.bookingbackend.repository.ReviewRepository;
 import com.hiumx.bookingbackend.repository.UserRepository;
+import com.hiumx.bookingbackend.repository.document.BookingCustomRepository;
+import com.hiumx.bookingbackend.repository.document.BookingDocumentRepository;
+import com.hiumx.bookingbackend.repository.document.ReviewCustomRepository;
 import com.hiumx.bookingbackend.repository.document.ReviewDocumentRepository;
 import com.hiumx.bookingbackend.service.ReviewService;
 import lombok.AllArgsConstructor;
@@ -28,9 +31,16 @@ public class ReviewServiceImpl implements ReviewService {
     private UserRepository userRepository;
     private HotelRepository hotelRepository;
     private ReviewDocumentRepository reviewDocumentRepository;
+    private ReviewCustomRepository reviewCustomRepository;
+    private BookingCustomRepository bookingCustomRepository;
 
     @Override
     public ReviewResponse create(ReviewRequest request) {
+        boolean reviewFounded = reviewCustomRepository.findReviewByUserHotel(request.getUserId(), request.getHotelId());
+
+        if(reviewFounded)
+            throw new ApplicationException(ErrorCode.USER_ALREADY_REVIEW);
+
         Review review = ReviewMapper.toReview(request);
 
         User user = userRepository.findById(request.getUserId())
@@ -38,6 +48,10 @@ public class ReviewServiceImpl implements ReviewService {
 
         Hotel hotel = hotelRepository.findById(request.getHotelId())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.HOTEL_NOT_FOUND));
+
+        if(bookingCustomRepository.getBookingByUserHotel(request.getUserId(), request.getHotelId()).isEmpty()) {
+            throw new ApplicationException(ErrorCode.NOT_HAVE_PERMISSION_REVIEW);
+        }
 
         review.setUser(user);
         review.setHotel(hotel);
@@ -49,7 +63,7 @@ public class ReviewServiceImpl implements ReviewService {
         ReviewResponse res = ReviewMapper.toReviewResponse(reviewSaved);
         res.setUser(UserMapper.toUserReviewResponse(user));
 
-        return res;
+        return null;
     }
 
     @Override

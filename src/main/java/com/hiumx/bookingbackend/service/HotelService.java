@@ -20,5 +20,6 @@ public interface HotelService {
     List<HotelDocument> getByLocation(String location);
     List<HotelSearchAllResponse> getTopHighRating();
     List<HotelResponse> getByManagerId(Long managerId);
+    List<Object[]> countHotelsByLocation();
 
 }

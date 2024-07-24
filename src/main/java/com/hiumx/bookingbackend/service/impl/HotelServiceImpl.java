@@ -223,4 +223,9 @@ public class HotelServiceImpl implements HotelService {
         return hotels.stream().map(HotelMapper::toHotelResponseFromDocumentV2).toList();
     }
 
+    @Override
+    public List<Object[]> countHotelsByLocation() {
+        return hotelRepository.countHotelsByLocation();
+    }
+
 }

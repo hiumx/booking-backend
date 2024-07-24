@@ -32,7 +32,7 @@ public class PostServiceImpl implements PostService {
     public PostResponse create(PostRequest request) {
         Post post = PostMapper.toPost(request);
         if(post.getImage().isEmpty())
-            post.setImage("https://d8271hh5ynwda.cloudfront.net/post_img.jpg");
+            post.setImage("https://d8271hh5ynwda.cloudfront.net/booking_post_demo.jpg");
         post.setIsConfirm(false);
 
         User user = userRepository.findById(request.getAuthorId())

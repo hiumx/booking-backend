@@ -34,6 +34,8 @@ public enum ErrorCode {
     TYPE_POST_NOT_FOUND(1021, "Type post not found!", HttpStatus.NOT_FOUND),
     POST_NOT_FOUND(1022, "Post not found!", HttpStatus.NOT_FOUND),
     POST_NOT_CONFIRMED_YET(1023, "Post not confirmed yet!", HttpStatus.BAD_REQUEST),
+    NOT_HAVE_PERMISSION_REVIEW(1024, "Not have permission to review!", HttpStatus.BAD_REQUEST),
+    USER_ALREADY_REVIEW(1025, "One account just review one time!", HttpStatus.BAD_REQUEST),
     ;
 
     private int code;

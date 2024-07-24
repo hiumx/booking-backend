@@ -54,9 +54,12 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public List<HotelSearchAllResponse> filterByCheckbox(SearchFilterRequest request) {
+        System.out.println(request);
         Set<HotelDocument> result = new HashSet<>();
 
-        String searchTerm = request.getLocation().isEmpty() ? request.getLocation() : request.getName();
+        String searchTerm = !request.getLocation().isEmpty() ? request.getLocation() : request.getName();
+
+        System.out.println("ST: " + searchTerm);
 
         if(request.getChecksType().isEmpty() && request.getChecksConvenient().isEmpty()
             && request.getLowestPrice() == 0 && request.getHighestPrice() == 1000
@@ -118,6 +121,7 @@ public class SearchServiceImpl implements SearchService {
             List<RoomDocument> roomDocuments = roomDocumentRepository.findByHotelId(h.getId());
             for (RoomDocument r : roomDocuments) {
                 map.put(r.getId(), h.getId());
+
             }
         }
 

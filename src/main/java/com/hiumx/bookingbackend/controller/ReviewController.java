@@ -22,7 +22,7 @@ public class ReviewController {
         ReviewResponse reviewResponse = reviewService.create(request);
         return ApiResponse.builder()
                 .code(1000)
-                .message("Get review successfully")
+                .message("Create review successfully")
                 .metadata(reviewResponse)
                 .build();
     }
